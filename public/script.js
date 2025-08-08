@@ -94,12 +94,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             // 백엔드 서버의 챗봇 API 호출
-            const response = await fetch(`/api/chat/${character}`, {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    character: character,
                     message: userMessage,
                     history: conversationHistory.slice(-10) // 최근 10개 대화만 전송
                 })
