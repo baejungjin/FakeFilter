@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAKEFILTER - Gameplay</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+        }
+
+        .container {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* 플로팅 메뉴 바 */
+        .floating-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-bottom: 2px solid #ff00ff;
+            border-radius: 0;
+            padding: 18px 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .menu-logo {
+            color: #ff00ff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 16px;
+            font-weight: normal;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+            letter-spacing: 2px;
+            margin-left: 20px;
+        }
+
+        .menu-items {
+            display: flex;
+            gap: 20px;
+        }
+
+        .menu-item {
+            color: #ffffff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            font-weight: normal;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: rgba(0, 255, 255, 0.5);
+            color: #00ffff;
+            transform: translateY(-1px);
+        }
+
+        .menu-item.active {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: rgba(0, 255, 255, 0.7);
+            color: #00ffff;
+        }
+
+        .content {
+            padding: 120px 50px 50px 50px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 32px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .page-subtitle {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            color: #ffffff;
+            margin-bottom: 50px;
+            opacity: 0.8;
+        }
+
+        .stage-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stage-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 255, 255, 0.3);
+            border-color: #ff00ff;
+        }
+
+        .stage-card.locked {
+            opacity: 0.5;
+            background: rgba(0, 0, 0, 0.5);
+            border-color: #666;
+            cursor: not-allowed;
+        }
+
+        .stage-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #666;
+        }
+
+        .stage-number {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 64px;
+            color: #00ffff;
+            margin-bottom: 25px;
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+        }
+
+        .stage-card.locked .stage-number {
+            color: #666;
+            text-shadow: none;
+        }
+
+        .stage-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 24px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .stage-card.locked .stage-title {
+            color: #999;
+        }
+
+        .stage-description {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            color: #ffffff;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .stage-card.locked .stage-description {
+            color: #666;
+        }
+
+        .difficulty-level {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-star {
+            color: #ffcc00;
+            font-size: 20px;
+        }
+
+        .difficulty-star.empty {
+            color: #444;
+        }
+
+        .stage-card.locked .difficulty-star {
+            color: #333;
+        }
+
+        .stage-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stage-card.locked .stage-stats {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            color: #ffffff;
+            opacity: 0.7;
+        }
+
+        .stage-card.locked .stat-item {
+            color: #666;
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 100px 20px 20px 20px;
+            }
+            
+            .page-title {
+                font-size: 24px;
+            }
+            
+            .stage-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .stage-card {
+                padding: 30px;
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 플로팅 메뉴 바 -->
+        <div class="floating-menu">
+            <div class="menu-logo">FAKEFILTER</div>
+            <div class="menu-items">
+                <div class="menu-item" onclick="window.location.href='home.html'">HOME</div>
+                <div class="menu-item" onclick="window.location.href='index.html'">STATS</div>
+                <div class="menu-item active">GAMEPLAY</div>
+                <div class="menu-item">EDUCATION</div>
+                <div class="menu-item">LEARNING</div>
+                <div class="menu-item">AI TECH</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <h1 class="page-title">STAGE SELECT</h1>
+            <p class="page-subtitle">도전할 스테이지를 선택하세요</p>
+            
+            <div class="stage-grid">
+                <!-- 스테이지 1 -->
+                <div class="stage-card" onclick="startStage(1)">
+                    <div class="stage-number">01</div>
+                    <h3 class="stage-title">민지</h3>
+                    <p class="stage-description">백신부작용과 가짜뉴스때문에 두려워하는 민지</p>
+                    <div class="difficulty-level">
+                        <span class="difficulty-star">★</span>
+                        <span class="difficulty-star empty">★</span>
+                        <span class="difficulty-star empty">★</span>
+                        <span class="difficulty-star empty">★</span>
+                        <span class="difficulty-star empty">★</span>
+                    </div>
+                    <div class="stage-stats" style="justify-content: center;">
+                        <span class="stat-item">데일리모드</span>
+                    </div>
+                </div>
+
+                <!-- 스테이지 2 -->
+                <div class="stage-card" onclick="startStage(2)">
+                    <div class="stage-number">02</div>
+                    <h3 class="stage-title">석대</h3>
+                    <p class="stage-description">가짜뉴스로인해 지구온난화를 믿지않는 석대</p>
+                    <div class="difficulty-level">
+                        <span class="difficulty-star">★</span>
+                        <span class="difficulty-star">★</span>
+                        <span class="difficulty-star">★</span>
+                        <span class="difficulty-star empty">★</span>
+                        <span class="difficulty-star empty">★</span>
+                    </div>
+                    <div class="stage-stats" style="justify-content: center;">
+                        <span class="stat-item">시나리오모드</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startStage(stageNumber) {
+            if (stageNumber === 1) {
+                // 민지와의 대화창으로 이동
+                window.location.href = 'index.html';
+            } else if (stageNumber === 2) {
+                // 석대와의 대화창으로 이동
+                window.location.href = 'seokdae.html';
+            } else if (stageNumber <= 3) {
+                alert(`스테이지 ${stageNumber}을(를) 시작합니다!`);
+                // 여기에 실제 게임 로직을 추가할 수 있습니다
+            }
+        }
+    </script>
+</body>
+</html>

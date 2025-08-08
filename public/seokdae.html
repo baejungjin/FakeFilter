@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>석대와의 대화</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-character="seokdae">
+    <div class="container">
+        <div class="background-overlay"></div>
+        
+        <!-- 플로팅 메뉴 바 -->
+        <div class="floating-menu">
+            <div class="menu-logo">FAKEFILTER</div>
+            <div class="menu-items">
+                <div class="menu-item" id="homeButton">HOME</div>
+                <div class="menu-item" onclick="window.location.href='index.html'">STATS</div>
+                <div class="menu-item" id="gameplayButton">GAMEPLAY</div>
+                <div class="menu-item">EDUCATION</div>
+                <div class="menu-item">LEARNING</div>
+                <div class="menu-item">AI TECH</div>
+            </div>
+        </div>
+        
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    <div class="profile-image" style="background-image: url('https://i.imgur.com/tRcnjyX.png') !important; background-size: cover !important; background-position: center !important;"></div>
+                    <div class="message-container">
+                        <div class="message-content">
+                            <div class="user-label">석대</div>
+                            <div>안녕하세요! 지구온난화는 거짓말이에요. 제가 본 기사들을 보면 과학자들도 의견이 분분하더라고요.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." autocomplete="off">
+                <div class="floating-buttons">
+                    <button id="internetButton">🌐</button>
+                    <button id="sendButton">전송</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 인터넷 검색 팝업 -->
+        <div id="internetPopup" class="popup-overlay" style="display: none;">
+            <div class="popup-content">
+                <button id="closePopup" class="close-button">&times;</button>
+                
+                <!-- 탭 버튼들 -->
+                <div class="tab-buttons">
+                    <button id="articleTab" class="tab-button active">기사</button>
+                    <button id="communityTab" class="tab-button">커뮤니티</button>
+                    <button id="acquaintanceTab" class="tab-button">주변지인</button>
+                </div>
+                
+                <!-- 컨텐츠 영역들 -->
+                <div class="tab-content">
+                    <div id="articleContent" class="content-area active">
+                        <h3>최신 기사</h3>
+                        <div class="content-item" id="article1">지구온난화는 허구라고 주장하는 새로운 연구 발표</div>
+                        <div class="content-item" id="article2">북극 빙하 증가, 온난화 이론에 의문 제기</div>
+                        <div class="content-item" id="article3">탄소배출 감소에도 기온 상승, 온난화 이론 모순</div>
+                        <div class="content-item" id="article4">기후변화 예측 모델 오류율 80% 넘어</div>
+                        <div class="content-item" id="article5">전 세계 온도계 측정 장비 오작동 의혹</div>
+                        
+                        <!-- 기사 탭 스와핑 버튼들 -->
+                        <div class="swap-buttons">
+                            <button class="swap-btn" id="articleSwap1">환경뉴스</button>
+                            <button class="swap-btn" id="articleSwap2">과학뉴스</button>
+                            <button class="swap-btn" id="articleSwap3">국제뉴스</button>
+                        </div>
+                    </div>
+                    
+                    <div id="communityContent" class="content-area">
+                        <h3>커뮤니티 게시글</h3>
+                        <div class="content-item" id="community1">[논란] 지구온난화 사기설, 진실은 무엇인가?</div>
+                        <div class="content-item" id="community2">기후변화 데이터 조작 의혹에 대한 토론</div>
+                        <div class="content-item" id="community3">온난화론자들이 숨기고 싶어하는 진실들</div>
+                        <div class="content-item" id="community4">실제 경험으로 봤을 때 온난화는 없다</div>
+                        <div class="content-item" id="community5">기후학자들의 연구비 따내기용 과장설</div>
+                        
+                        <!-- 커뮤니티 탭 스와핑 버튼들 -->
+                        <div class="swap-buttons">
+                            <button class="swap-btn" id="communitySwap1">포럼글</button>
+                            <button class="swap-btn" id="communitySwap2">토론방</button>
+                            <button class="swap-btn" id="communitySwap3">카페글</button>
+                        </div>
+                    </div>
+                    
+                    <div id="acquaintanceContent" class="content-area">
+                        <h3>주변 지인 소식</h3>
+                        <div class="content-item" id="acquaintance1">친구: "작년 겨울이 역대급으로 추웠는데 온난화라고?"</div>
+                        <div class="content-item" id="acquaintance2">삼촌: "내가 젊었을 때가 지금보다 훨씬 더웠어"</div>
+                        <div class="content-item" id="acquaintance3">동료: "환경세만 늘리려는 정부의 수작이야"</div>
+                        <div class="content-item" id="acquaintance4">할머니: "옛날 여름이 지금보다 훨씬 더웠지"</div>
+                        <div class="content-item" id="acquaintance5">이웃집 아저씨: "북극곰이 늘어나고 있다던데?"</div>
+                        
+                        <!-- 주변지인 탭 스와핑 버튼들 -->
+                        <div class="swap-buttons">
+                            <button class="swap-btn" id="acquaintanceSwap1">SNS피드</button>
+                            <button class="swap-btn" id="acquaintanceSwap2">메신저</button>
+                            <button class="swap-btn" id="acquaintanceSwap3">블로그</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 기사 상세보기 모달 -->
+        <div id="articleDetailModal" class="article-modal-overlay" style="display: none;">
+            <div class="article-modal-content">
+                <button id="closeArticleModal" class="article-close-button">&times;</button>
+                
+                <div class="article-header">
+                    <div class="article-source" id="articleSource">환경뉴스</div>
+                    <div class="article-date" id="articleDate">2024.01.15</div>
+                </div>
+                
+                <h2 class="article-title" id="articleTitle">기사 제목</h2>
+                
+                <div class="article-content">
+                    <div class="article-image">
+                        <div class="placeholder-image">📰</div>
+                    </div>
+                    
+                    <div class="article-body" id="articleBody">
+                        기사 내용이 여기에 표시됩니다.
+                    </div>
+                    
+                    <div class="article-footer">
+                        <div class="article-tags">
+                            <span class="tag" id="tag1">기후변화</span>
+                            <span class="tag" id="tag2">환경</span>
+                            <span class="tag" id="tag3">과학</span>
+                        </div>
+                        
+                        <div class="article-warning">
+                            <div class="warning-icon">⚠️</div>
+                            <div class="warning-text">이 기사의 내용을 비판적으로 검토해보세요</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 제출하기 버튼 -->
+        <button id="submitButton" class="submit-button">SUBMIT</button>
+        
+        <!-- 보고서 팝업 -->
+        <div id="reportPopup" class="report-popup-overlay" style="display: none;">
+            <div class="report-popup-content">
+                <button id="closeReportPopup" class="report-close-button">&times;</button>
+                
+                <div class="report-header">
+                    <div class="report-character-image"></div>
+                    <div class="report-title">
+                        <h2>학습 완료 보고서</h2>
+                        <h3>석대와의 대화 분석</h3>
+                    </div>
+                </div>
+                
+                <div class="report-content">
+                    <div class="report-section">
+                        <h4>📊 대화 통계</h4>
+                        <div class="report-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">총 대화 수:</span>
+                                <span class="stat-value" id="messageCount">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">학습 주제:</span>
+                                <span class="stat-value">지구온난화 회의론</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">난이도:</span>
+                                <span class="stat-value">⭐⭐⭐ 중급</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h4>🎯 학습 성과</h4>
+                        <div class="achievement-list">
+                            <div class="achievement-item">✅ 복합적 가짜뉴스 패턴 이해</div>
+                            <div class="achievement-item">✅ 과학적 합의와 개별 의견 구분</div>
+                            <div class="achievement-item">✅ 논리적 반박 및 설득 기법 습득</div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h4>💡 주요 학습 내용</h4>
+                        <div class="learning-points">
+                            <p>• 과학적 합의는 개별 과학자 의견과 다름을 이해</p>
+                            <p>• 기후변화는 97% 이상 과학자들이 동의하는 사실</p>
+                            <p>• 의심스러운 정보는 권위 있는 과학 기관 자료로 검증</p>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h4>🚀 다음 단계</h4>
+                        <p class="next-step">축하합니다! 고급 단계까지 완료하셨습니다. 더 다양한 주제로 도전해보세요!</p>
+                    </div>
+                </div>
+                
+                <div class="report-footer">
+                    <button id="nextStageButton" class="report-button primary">스테이지 선택</button>
+                    <button id="reportCloseButton" class="report-button secondary">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
