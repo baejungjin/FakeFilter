@@ -94,7 +94,7 @@ const CHARACTER_PROMPTS = {
 };
 
 // ================================
-// 🤖 OpenAI API 호출 함수
+// 🤖 OpenAI API 호출 함수 - Updated for bias system
 // ================================
 
 async function getAIResponse(character, userMessage, conversationHistory = []) {
