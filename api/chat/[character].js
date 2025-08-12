@@ -1,4 +1,4 @@
-const axios = require('axios');
+const OpenAI = require('openai');
 
 // ================================
 // 🎭 캐릭터별 AI 프롬프트 설정
@@ -75,16 +75,14 @@ const CHARACTER_PROMPTS = {
 };
 
 // ================================
-// 🤖 OpenAI API 호출 함수 - Updated for bias system
+// 🤖 OpenAI API 설정 및 호출 함수
 // ================================
 
-async function getAIResponse(character, userMessage, conversationHistory = []) {
-    const openaiApiKey = process.env.OPENAI_API_KEY;
-    
-    if (!openaiApiKey) {
-        throw new Error('OpenAI API 키가 설정되지 않았습니다');
-    }
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
+async function getAIResponse(character, userMessage, conversationHistory = []) {
     const characterData = CHARACTER_PROMPTS[character];
     if (!characterData) {
         throw new Error('잘못된 캐릭터입니다');
@@ -104,24 +102,19 @@ async function getAIResponse(character, userMessage, conversationHistory = []) {
             }
         ];
 
-        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        const completion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: messages,
             max_tokens: 500,
             temperature: 0.8,
             presence_penalty: 0.1,
             frequency_penalty: 0.1
-        }, {
-            headers: {
-                'Authorization': `Bearer ${openaiApiKey}`,
-                'Content-Type': 'application/json'
-            }
         });
 
-        return response.data.choices[0].message.content;
+        return completion.choices[0].message.content;
 
     } catch (error) {
-        console.error('OpenAI API 오류:', error.response?.data || error.message);
+        console.error('OpenAI API 오류:', error.message || error);
         
         // 폴백 응답 (API 오류 시)
         const fallbackResponses = {
