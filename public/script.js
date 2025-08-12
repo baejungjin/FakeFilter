@@ -259,42 +259,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // 보고서 섹션 업데이트 함수
     function updateReportSection(sectionType, items) {
         const isAdvantage = sectionType === 'advantages';
-        const title = isAdvantage ? '🎯 설득 성공 포인트' : '💡 개선이 필요한 부분';
+        const targetId = isAdvantage ? 'advantagesContent' : 'disadvantagesContent';
         
-        // 기존 학습 내용 섹션을 찾아서 교체
-        const learningSection = document.querySelector('.report-section h4');
-        if (learningSection && learningSection.textContent.includes('주요 학습 내용')) {
-            const parentSection = learningSection.parentElement;
-            
-            // 새로운 평가 섹션 생성
-            parentSection.innerHTML = `
-                <h4>${title}</h4>
-                <div class="evaluation-points">
-                    ${items.map(item => `<p>• ${item.replace(/^-\s*/, '').trim()}</p>`).join('')}
-                </div>
-            `;
-            
-            // 단점 섹션도 추가 (장점 처리 후)
-            if (isAdvantage) {
-                // 단점 섹션을 위한 공간 준비
-                const nextSection = document.querySelector('.report-section:last-of-type');
-                if (nextSection) {
-                    nextSection.innerHTML = `
-                        <h4>💡 개선이 필요한 부분</h4>
-                        <div class="evaluation-points" id="disadvantages-placeholder">
-                            <p>평가 중...</p>
-                        </div>
-                    `;
-                }
-            } else {
-                // 단점 섹션 업데이트
-                const disadvantagesPlaceholder = document.getElementById('disadvantages-placeholder');
-                if (disadvantagesPlaceholder) {
-                    disadvantagesPlaceholder.innerHTML = items.map(item => 
-                        `<p>• ${item.replace(/^-\s*/, '').trim()}</p>`
-                    ).join('');
-                }
-            }
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            targetElement.innerHTML = items.map(item => 
+                `<p>• ${item.replace(/^-\s*/, '').trim()}</p>`
+            ).join('');
+            console.log(`${isAdvantage ? '장점' : '단점'} 섹션 업데이트 완료:`, items);
+        } else {
+            console.error(`${targetId} 요소를 찾을 수 없습니다`);
         }
     }
 
