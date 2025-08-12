@@ -94,13 +94,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             // 백엔드 서버의 챗봇 API 호출
-            const response = await fetch('/api/chat', {
+            const response = await fetch(`/api/chat/${character}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    character: character,
                     message: userMessage,
                     history: conversationHistory.slice(-10) // 최근 10개 대화만 전송
                 })
@@ -227,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 홈 버튼 클릭 이벤트
     if (homeButton) {
         homeButton.addEventListener('click', function() {
-            window.location.href = 'home.html';
+            window.location.href = 'index.html';
         });
     }
 

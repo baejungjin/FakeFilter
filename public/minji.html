@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT 학습 사이트</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="background-overlay"></div>
+        
+        <!-- 플로팅 메뉴 바 -->
+        <div class="floating-menu">
+            <div class="menu-logo">FAKEFILTER</div>
+            <div class="menu-items">
+                <div class="menu-item" id="homeButton">HOME</div>
+                <div class="menu-item">STATS</div>
+                <div class="menu-item" id="gameplayButton">GAMEPLAY</div>
+                <div class="menu-item">EDUCATION</div>
+                <div class="menu-item">LEARNING</div>
+                <div class="menu-item">AI TECH</div>
+            </div>
+        </div>
+        
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    <div class="profile-image"></div>
+                    <div class="message-container">
+                        <div class="message-content">
+                            <div class="user-label">민지</div>
+                            <div>안녕하세요! 배경사진과 함께 학습을 시작해보세요. 궁금한 것이 있으면 언제든 물어보시길!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." autocomplete="off">
+                <div class="floating-buttons">
+                    <button id="internetButton">🌐</button>
+                    <button id="sendButton">전송</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 인터넷 검색 팝업 -->
+        <div id="internetPopup" class="popup-overlay" style="display: none;">
+            <div class="popup-content">
+                <button id="closePopup" class="close-button">&times;</button>
+                
+                <!-- 탭 버튼들 -->
+                <div class="tab-buttons">
+                    <button id="articleTab" class="tab-button active">기사</button>
+                    <button id="communityTab" class="tab-button">커뮤니티</button>
+                    <button id="acquaintanceTab" class="tab-button">주변지인</button>
+                </div>
+                
+                <!-- 컨텐츠 영역들 -->
+                <div class="tab-content">
+                    <div id="articleContent" class="content-area active">
+                        <h3>최신 기사</h3>
+                        <div class="content-item" id="article1">백신 접종 후 심각한 부작용 사례 급증</div>
+                        <div class="content-item" id="article2">화이자 백신 심근염 위험 WHO도 인정</div>
+                        <div class="content-item" id="article3">젊은층 백신 부작용 숨겨진 진실</div>
+                        <div class="content-item" id="article4">백신 접종률과 사망률 상관관계 의혹</div>
+                        <div class="content-item" id="article5">의료진도 백신 부작용 우려 표명</div>
+                        
+                        <!-- 기사 탭 스와핑 버튼들 -->
+                        <div class="swap-buttons">
+                            <button class="swap-btn" id="articleSwap1">의료뉴스</button>
+                            <button class="swap-btn" id="articleSwap2">건강뉴스</button>
+                            <button class="swap-btn" id="articleSwap3">과학뉴스</button>
+                        </div>
+                    </div>
+                    
+                    <div id="communityContent" class="content-area">
+                        <h3>커뮤니티 게시글</h3>
+                        <div class="content-item" id="community1">[실화] 백신 맞고 응급실 실려간 후기</div>
+                        <div class="content-item" id="community2">백신 부작용 은폐 의혹에 대한 토론</div>
+                        <div class="content-item" id="community3">의료진이 말하지 않는 백신의 진실</div>
+                        <div class="content-item" id="community4">주변에서 백신 부작용 겪은 사람들</div>
+                        <div class="content-item" id="community5">백신보다 면역력이 더 중요하다</div>
+                        
+                        <!-- 커뮤니티 탭 스와핑 버튼들 -->
+                        <div class="swap-buttons">
+                            <button class="swap-btn" id="communitySwap1">의료포럼</button>
+                            <button class="swap-btn" id="communitySwap2">건강카페</button>
+                            <button class="swap-btn" id="communitySwap3">맘카페</button>
+                        </div>
+                    </div>
+                    
+                    <div id="acquaintanceContent" class="content-area">
+                        <h3>주변 지인 소식</h3>
+                        <div class="content-item" id="acquaintance1">친구: "백신 맞고 한 달째 어지러워"</div>
+                        <div class="content-item" id="acquaintance2">엄마: "옆집 아주머니 백신 맞고 입원했대"</div>
+                        <div class="content-item" id="acquaintance3">동생: "백신 안 맞은 애들이 더 건강해"</div>
+                        <div class="content-item" id="acquaintance4">직장동료: "백신 맞고 계속 아픈 것 같아"</div>
+                        <div class="content-item" id="acquaintance5">이모: "백신보다 건강관리가 더 중요해"</div>
+                        
+                        <!-- 주변지인 탭 스와핑 버튼들 -->
+                        <div class="swap-buttons">
+                            <button class="swap-btn" id="acquaintanceSwap1">카톡방</button>
+                            <button class="swap-btn" id="acquaintanceSwap2">SNS피드</button>
+                            <button class="swap-btn" id="acquaintanceSwap3">가족톡</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 기사 상세보기 모달 -->
+        <div id="articleDetailModal" class="article-modal-overlay" style="display: none;">
+            <div class="article-modal-content">
+                <button id="closeArticleModal" class="article-close-button">&times;</button>
+                
+                <div class="article-header">
+                    <div class="article-source" id="articleSource">의료뉴스</div>
+                    <div class="article-date" id="articleDate">2024.01.15</div>
+                </div>
+                
+                <h2 class="article-title" id="articleTitle">기사 제목</h2>
+                
+                <div class="article-content">
+                    <div class="article-image">
+                        <div class="placeholder-image">💉</div>
+                    </div>
+                    
+                    <div class="article-body" id="articleBody">
+                        기사 내용이 여기에 표시됩니다.
+                    </div>
+                    
+                    <div class="article-footer">
+                        <div class="article-tags">
+                            <span class="tag" id="tag1">백신</span>
+                            <span class="tag" id="tag2">건강</span>
+                            <span class="tag" id="tag3">부작용</span>
+                        </div>
+                        
+                        <div class="article-warning">
+                            <div class="warning-icon">⚠️</div>
+                            <div class="warning-text">이 기사의 내용을 비판적으로 검토해보세요</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 제출하기 버튼 -->
+        <button id="submitButton" class="submit-button">SUBMIT</button>
+        
+        <!-- 보고서 팝업 -->
+        <div id="reportPopup" class="report-popup-overlay" style="display: none;">
+            <div class="report-popup-content">
+                <button id="closeReportPopup" class="report-close-button">&times;</button>
+                
+                <div class="report-header">
+                    <div class="report-character-image"></div>
+                    <div class="report-title">
+                        <h2>학습 완료 보고서</h2>
+                        <h3>민지와의 대화 분석</h3>
+                    </div>
+                </div>
+                
+                <div class="report-content">
+                    <div class="report-section">
+                        <h4>📊 대화 통계</h4>
+                        <div class="report-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">총 대화 수:</span>
+                                <span class="stat-value" id="messageCount">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">학습 주제:</span>
+                                <span class="stat-value">백신 부작용 가짜뉴스</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">난이도:</span>
+                                <span class="stat-value">⭐ 초급</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h4>🎯 학습 성과</h4>
+                        <div class="achievement-list">
+                            <div class="achievement-item">✅ 가짜뉴스 식별 기초 학습 완료</div>
+                            <div class="achievement-item">✅ 신뢰할 수 있는 정보원 이해</div>
+                            <div class="achievement-item">✅ 비판적 사고 능력 향상</div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h4>💡 주요 학습 내용</h4>
+                        <div class="learning-points">
+                            <p>• 백신 관련 정보는 WHO, 식약처 등 공신력 있는 기관 정보 확인</p>
+                            <p>• 개인 경험담보다는 과학적 근거 중심으로 판단</p>
+                            <p>• 소셜미디어 정보는 항상 출처와 사실 여부 검증 필요</p>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h4>🚀 다음 단계</h4>
+                        <p class="next-step">석대와의 대화를 통해 더 복잡한 가짜뉴스 상황에 도전해보세요!</p>
+                    </div>
+                </div>
+                
+                <div class="report-footer">
+                    <button id="nextStageButton" class="report-button primary">다음 스테이지</button>
+                    <button id="reportCloseButton" class="report-button secondary">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
