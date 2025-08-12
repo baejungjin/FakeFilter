@@ -293,20 +293,36 @@ document.addEventListener('DOMContentLoaded', function() {
         const result = confirm(`${characterName}와의 대화를 제출하시겠습니까?\n\n학습 완료 보고서가 생성됩니다.`);
         
         if (result) {
-            console.log('제출 확인 - 보고서 팝업 표시');
+            console.log('제출 확인 - 보고서 제출 메시지 전송');
             
-            // 제출 버튼 비활성화
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.textContent = 'COMPLETED';
-                submitButton.style.opacity = '0.6';
-                submitButton.style.cursor = 'not-allowed';
-            }
+            // 자동으로 "보고서 제출" 메시지 전송
+            addMessage('보고서 제출', true);
+            messageInput.value = '';
             
-            // 보고서 팝업 표시
-            setTimeout(() => {
-                showReportPopup();
-            }, 300);
+            // AI 응답 대기 후 보고서 팝업 표시
+            setTimeout(async () => {
+                try {
+                    const botResponse = await getBotResponse('보고서 제출');
+                    addMessage(botResponse, false);
+                } catch (error) {
+                    console.error('보고서 제출 응답 오류:', error);
+                    addMessage('학습이 완료되었습니다. 수고하셨습니다!', false);
+                }
+                
+                // 제출 버튼 비활성화
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'COMPLETED';
+                    submitButton.style.opacity = '0.6';
+                    submitButton.style.cursor = 'not-allowed';
+                }
+                
+                // 보고서 팝업 표시
+                setTimeout(() => {
+                    showReportPopup();
+                }, 1000);
+                
+            }, 500);
         }
     }
     
