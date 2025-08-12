@@ -237,6 +237,67 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // AI 평가 결과를 보고서에 반영하는 함수
+    function updateReportWithEvaluation(aiResponse) {
+        console.log('AI 평가 파싱 중:', aiResponse);
+        
+        // "장점:" 과 "단점:" 부분을 파싱
+        const advantageMatch = aiResponse.match(/장점\s*:\s*([\s\S]*?)(?=단점\s*:|$)/);
+        const disadvantageMatch = aiResponse.match(/단점\s*:\s*([\s\S]*?)$/);
+        
+        if (advantageMatch) {
+            const advantages = advantageMatch[1].trim().split('\n').filter(line => line.trim());
+            updateReportSection('advantages', advantages);
+        }
+        
+        if (disadvantageMatch) {
+            const disadvantages = disadvantageMatch[1].trim().split('\n').filter(line => line.trim());
+            updateReportSection('disadvantages', disadvantages);
+        }
+    }
+    
+    // 보고서 섹션 업데이트 함수
+    function updateReportSection(sectionType, items) {
+        const isAdvantage = sectionType === 'advantages';
+        const title = isAdvantage ? '🎯 설득 성공 포인트' : '💡 개선이 필요한 부분';
+        
+        // 기존 학습 내용 섹션을 찾아서 교체
+        const learningSection = document.querySelector('.report-section h4');
+        if (learningSection && learningSection.textContent.includes('주요 학습 내용')) {
+            const parentSection = learningSection.parentElement;
+            
+            // 새로운 평가 섹션 생성
+            parentSection.innerHTML = `
+                <h4>${title}</h4>
+                <div class="evaluation-points">
+                    ${items.map(item => `<p>• ${item.replace(/^-\s*/, '').trim()}</p>`).join('')}
+                </div>
+            `;
+            
+            // 단점 섹션도 추가 (장점 처리 후)
+            if (isAdvantage) {
+                // 단점 섹션을 위한 공간 준비
+                const nextSection = document.querySelector('.report-section:last-of-type');
+                if (nextSection) {
+                    nextSection.innerHTML = `
+                        <h4>💡 개선이 필요한 부분</h4>
+                        <div class="evaluation-points" id="disadvantages-placeholder">
+                            <p>평가 중...</p>
+                        </div>
+                    `;
+                }
+            } else {
+                // 단점 섹션 업데이트
+                const disadvantagesPlaceholder = document.getElementById('disadvantages-placeholder');
+                if (disadvantagesPlaceholder) {
+                    disadvantagesPlaceholder.innerHTML = items.map(item => 
+                        `<p>• ${item.replace(/^-\s*/, '').trim()}</p>`
+                    ).join('');
+                }
+            }
+        }
+    }
+
     // 보고서 팝업 열기/닫기 함수
     function showReportPopup() {
         console.log('showReportPopup 호출됨');
@@ -304,6 +365,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 try {
                     const botResponse = await getBotResponse('보고서 제출');
                     addMessage(botResponse, false);
+                    
+                    // AI 평가 결과를 파싱하여 보고서에 반영
+                    updateReportWithEvaluation(botResponse);
+                    
                 } catch (error) {
                     console.error('보고서 제출 응답 오류:', error);
                     addMessage('학습이 완료되었습니다. 수고하셨습니다!', false);
