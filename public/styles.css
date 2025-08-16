@@ -1214,3 +1214,96 @@ body[data-character="seokdae"] .report-character-image {
         width: 100%;
     }
 }
+
+/* ================================
+   설득 결과 표시 스타일
+   ================================ */
+
+.persuasion-result {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    text-align: center;
+    animation: resultPulse 2s infinite;
+}
+
+.result-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 성공 스타일 */
+.persuasion-result.success {
+    border-color: #00ff00;
+    background: rgba(0, 255, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.persuasion-result.success .result-text {
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+/* 실패 스타일 */
+.persuasion-result.failure {
+    border-color: #ff0000;
+    background: rgba(255, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+}
+
+.persuasion-result.failure .result-text {
+    color: #ff0000;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+/* 평가 중 스타일 */
+.persuasion-result.evaluating {
+    border-color: #ffff00;
+    background: rgba(255, 255, 0, 0.1);
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);
+}
+
+.persuasion-result.evaluating .result-text {
+    color: #ffff00;
+    text-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+}
+
+/* 결과 애니메이션 */
+@keyframes resultPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+/* 성공 시 특별 애니메이션 */
+.persuasion-result.success {
+    animation: successGlow 3s ease-in-out infinite;
+}
+
+@keyframes successGlow {
+    0%, 100% { 
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 30px rgba(0, 255, 0, 0.6);
+        transform: scale(1.02);
+    }
+}
+
+/* 실패 시 특별 애니메이션 */
+.persuasion-result.failure {
+    animation: failureShake 0.5s ease-in-out 3;
+}
+
+@keyframes failureShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}

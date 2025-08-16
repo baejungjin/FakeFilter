@@ -241,18 +241,54 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateReportWithEvaluation(aiResponse) {
         console.log('AI 평가 파싱 중:', aiResponse);
         
-        // "장점:" 과 "단점:" 부분을 파싱
+        // "결과:", "장점:", "단점:" 부분을 파싱
+        const resultMatch = aiResponse.match(/결과\s*:\s*(\S+)/);
         const advantageMatch = aiResponse.match(/장점\s*:\s*([\s\S]*?)(?=단점\s*:|$)/);
         const disadvantageMatch = aiResponse.match(/단점\s*:\s*([\s\S]*?)$/);
         
+        // 설득 결과 업데이트
+        if (resultMatch) {
+            const result = resultMatch[1].trim();
+            updatePersuasionResult(result);
+        }
+        
+        // 장점 업데이트
         if (advantageMatch) {
             const advantages = advantageMatch[1].trim().split('\n').filter(line => line.trim());
             updateReportSection('advantages', advantages);
         }
         
+        // 단점 업데이트
         if (disadvantageMatch) {
             const disadvantages = disadvantageMatch[1].trim().split('\n').filter(line => line.trim());
             updateReportSection('disadvantages', disadvantages);
+        }
+    }
+    
+    // 설득 결과 표시 함수
+    function updatePersuasionResult(result) {
+        const persuasionElement = document.getElementById('persuasionResult');
+        const resultTextElement = document.getElementById('resultText');
+        
+        if (persuasionElement && resultTextElement) {
+            // 기존 클래스 제거
+            persuasionElement.classList.remove('success', 'failure', 'evaluating');
+            
+            // 결과에 따른 스타일 적용
+            if (result === '성공') {
+                persuasionElement.classList.add('success');
+                resultTextElement.textContent = '설득 성공!';
+            } else if (result === '실패') {
+                persuasionElement.classList.add('failure');
+                resultTextElement.textContent = '설득 실패';
+            } else {
+                persuasionElement.classList.add('evaluating');
+                resultTextElement.textContent = '평가 중...';
+            }
+            
+            console.log('설득 결과 업데이트:', result);
+        } else {
+            console.error('설득 결과 표시 요소를 찾을 수 없습니다');
         }
     }
     
