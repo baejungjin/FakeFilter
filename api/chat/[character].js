@@ -118,9 +118,9 @@ async function getAIResponse(character, userMessage, conversationHistory = []) {
         ];
 
         const completion = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o-mini",
             messages: messages,
-            max_tokens: 500,
+            max_tokens: 800,
             temperature: 0.8,
             presence_penalty: 0.1,
             frequency_penalty: 0.1
