@@ -45,23 +45,17 @@ a {
     color: inherit;
 }
 
-/* CRT Effect */
+/* CRT Effect - 스캔라인 제거 */
 .crt-overlay {
     content: "";
-    display: block;
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        rgba(18, 16, 16, 0) 50%, 
-        rgba(0, 0, 0, 0.25) 50%
-    );
-    background-size: 100% 4px;
     z-index: 1000;
     pointer-events: none;
-    opacity: 0.8;
 }
 
 /* 플로팅 메뉴 바 (배정진 스타일) */
