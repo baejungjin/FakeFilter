@@ -289,11 +289,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             updateReportSection('advantages', advantages);
         } else {
-            // 기본 장점 제공
-            const defaultAdvantages = isSeokdaePage ? 
-                ['복합적 편향에 대한 이해를 보여주었습니다', '논리적 근거를 제시하려고 노력했습니다'] :
-                ['공감적 소통을 시도했습니다', '신뢰할 수 있는 정보를 제공하려고 했습니다'];
-            updateReportSection('advantages', defaultAdvantages);
+            // 대화 수 확인 (3회 이하 시 특별 메시지)
+            const userMessages = chatMessages.querySelectorAll('.user-message');
+            const actualMessageCount = Math.max(0, userMessages.length - 1); // "보고서 제출" 메시지 제외
+            
+            if (isSeokdaePage && actualMessageCount <= 3) {
+                updateReportSection('advantages', ['좀 더 노력해 보세요!']);
+            } else {
+                // 기본 장점 제공
+                const defaultAdvantages = isSeokdaePage ? 
+                    ['복합적 편향에 대한 이해를 보여주었습니다', '논리적 근거를 제시하려고 노력했습니다'] :
+                    ['공감적 소통을 시도했습니다', '신뢰할 수 있는 정보를 제공하려고 했습니다'];
+                updateReportSection('advantages', defaultAdvantages);
+            }
         }
         
         // 단점 업데이트
