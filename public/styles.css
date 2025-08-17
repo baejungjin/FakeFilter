@@ -641,9 +641,9 @@ body[data-character="seokdae"] {
     outline: none !important;
 }
 
-/* 채팅 컨테이너 원래 위치로 복원 */
+/* 채팅 컨테이너 위치 조정 */
 .chat-container {
-    transform: translateY(90px);
+    transform: translateY(70px);
     height: calc(100vh - 220px);
 }
 

@@ -11,26 +11,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/neo_style.css">
 </head>
 <body data-character="minji">
+    <div class="crt-overlay"></div>
+    
+    <!-- 플로팅 메뉴 바 -->
+    <div class="floating-menu">
+        <div class="menu-logo">FAKEFILTER</div>
+        <div class="menu-items">
+            <div class="menu-item" onclick="window.location.href='index.html'">HOME</div>
+            <div class="menu-item" onclick="window.location.href='gameplay.html'">GAMEPLAY</div>
+            <div class="menu-item" onclick="window.location.href='index.html#game-methods'">EDUCATION</div>
+            <div class="menu-item">AI TECH</div>
+        </div>
+    </div>
     <div class="container">
         <div class="background-overlay"></div>
         
-        <!-- 플로팅 메뉴 바 -->
-        <div class="floating-menu">
-            <div class="menu-logo">FAKEFILTER</div>
-            <div class="menu-items">
-                <div class="menu-item" id="homeButton">HOME</div>
-                <div class="menu-item">STATS</div>
-                <div class="menu-item" id="gameplayButton">GAMEPLAY</div>
-                <div class="menu-item">EDUCATION</div>
-                <div class="menu-item">LEARNING</div>
-                <div class="menu-item">AI TECH</div>
-            </div>
-        </div>
         
         
-        <div class="chat-container">
+        <div class="chat-container" style="margin-top: 30px;">
             <div class="chat-messages" id="chatMessages">
                 <div class="message bot-message">
                     <div class="profile-image"></div>
@@ -232,5 +233,6 @@
     </div>
     
     <script src="script.js"></script>
+    <script src="js/neo_main.js"></script>
 </body>
 </html>

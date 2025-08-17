@@ -3,189 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAKEFILTER - Home</title>
+    <title>FakeFilter - 사이버펑크 가짜 뉴스 탐지 게임</title>
+    <link rel="stylesheet" href="css/neo_style.css">
     
     <!-- 폰트 로딩 최적화 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    
-    <style>
-        /* 폰트 로딩 fallback 추가 */
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body, html {
-            height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: white;
-        }
-
-        .container {
-            position: relative;
-            height: 100vh;
-            background: white;
-        }
-
-        /* 플로팅 메뉴 바 */
-        .floating-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 10;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            border-bottom: 2px solid #ff00ff;
-            border-radius: 0;
-            padding: 18px 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .menu-logo {
-            color: #ff00ff;
-            font-family: 'Press Start 2P', 'Courier New', 'Monaco', 'Consolas', monospace;
-            font-size: 16px;
-            font-weight: normal;
-            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-            letter-spacing: 2px;
-            margin-left: 20px;
-        }
-
-        .menu-items {
-            display: flex;
-            gap: 20px;
-        }
-
-        .menu-item {
-            color: #ffffff;
-            font-family: 'Press Start 2P', 'Courier New', 'Monaco', 'Consolas', monospace;
-            font-size: 10px;
-            font-weight: normal;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-
-        .menu-item:hover {
-            background: rgba(0, 255, 255, 0.1);
-            border-color: rgba(0, 255, 255, 0.5);
-            color: #00ffff;
-            transform: translateY(-1px);
-        }
-
-        .menu-item.active {
-            background: rgba(0, 255, 255, 0.2);
-            border-color: rgba(0, 255, 255, 0.7);
-            color: #00ffff;
-        }
-
-        .content {
-            padding: 120px 50px 50px 50px;
-            text-align: center;
-        }
-
-        .welcome-title {
-            font-family: 'Press Start 2P', 'Courier New', 'Monaco', 'Consolas', monospace;
-            font-size: 32px;
-            color: #333;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .welcome-text {
-            font-family: 'Press Start 2P', 'Courier New', 'Monaco', 'Consolas', monospace;
-            font-size: 16px;
-            color: #666;
-            line-height: 2;
-            margin-bottom: 50px;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 15px;
-            padding: 30px;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border-color: #00ffff;
-        }
-
-        .feature-title {
-            font-family: 'Press Start 2P', 'Courier New', 'Monaco', 'Consolas', monospace;
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .feature-text {
-            font-family: 'Press Start 2P', 'Courier New', 'Monaco', 'Consolas', monospace;
-            font-size: 10px;
-            color: #666;
-            line-height: 1.8;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <!-- 플로팅 메뉴 바 -->
-        <div class="floating-menu">
-            <div class="menu-logo">FAKEFILTER</div>
-            <div class="menu-items">
-                <div class="menu-item active">HOME</div>
-                <div class="menu-item" onclick="window.location.href='minji.html'">STATS</div>
-                <div class="menu-item" onclick="window.location.href='gameplay.html'">GAMEPLAY</div>
-                <div class="menu-item">EDUCATION</div>
-                <div class="menu-item">LEARNING</div>
-                <div class="menu-item">AI TECH</div>
+    <div class="crt-overlay"></div>
+    
+    <!-- 플로팅 메뉴 바 -->
+    <div class="floating-menu">
+        <div class="menu-logo">FAKEFILTER</div>
+        <div class="menu-items">
+            <div class="menu-item" onclick="window.location.href='index.html'">HOME</div>
+            <div class="menu-item" onclick="window.location.href='gameplay.html'">GAMEPLAY</div>
+            <div class="menu-item" onclick="smoothScrollToSection('game-methods')">EDUCATION</div>
+            <div class="menu-item">AI TECH</div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-background" id="hero-background">
+            <img src="https://i.imgur.com/nn9OkEK.png" alt="FakeFilter Concept Illustration">
+        </div>
+        
+        <div class="hero-content">
+            <h1 id="hero-title">FAKEFILTER</h1>
+            <p id="hero-subtitle">속임수를 찾아내라. 진실을 발견하라.</p>
+            <div id="hero-buttons">
+                <a href="gameplay.html" class="neon-button">미션 시작</a>
+                <a href="#info" class="neon-button-outline">더 알아보기</a>
             </div>
         </div>
         
-        <div class="content">
-            <h1 class="welcome-title">WELCOME TO FAKEFILTER</h1>
-            <p class="welcome-text">AI 기반 가짜뉴스 판별 시스템</p>
+        <div class="scroll-hint">
+            <p>스크롤하여 접속</p>
+            <div class="arrow-down">▼</div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="info" class="stats-section">
+        <div class="section-container">
+            <h2 class="section-title">🚨 디지털 위기의 시대</h2>
+            <div class="stats-intro">
+                <h3>편향과 허위정보로 둘러싸인 현실</h3>
+                <p>우리는 매일 수백 개의 정보를 접하지만, 그 중 얼마나 많은 것이 편향되어 있거나 조작된 것일까요? 디지털 네이티브 세대조차 정보 판별에 어려움을 겪고 있는 현실을 직면해야 합니다.</p>
+            </div>
             
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <h3 class="feature-title">AI 분석</h3>
-                    <p class="feature-text">첨단 AI 기술로 가짜뉴스를 정확하게 판별합니다</p>
+            <div class="stats-grid">
+                <div class="stat-box critical">
+                    <div class="stat-icon">🤖</div>
+                    <div class="stat-number">89.3&nbsp;%</div>
+                    <div class="stat-text">국내 대학생 생성형 AI 사용 경험률</div>
+                    <div class="stat-source">하지만 대부분 출처나 편향성 검증 없이 맹신</div>
+                    <div class="stat-detail">
+                        <p>• 정보의 신뢰성 확인: 23%만 실행</p>
+                        <p>• 편향성 검토: 거의 하지 않음</p>
+                        <p>• 팩트체킹 습관: 15% 미만</p>
+                    </div>
+                    <div class="stat-citation">출처: 전자신문, 2023.04.03</div>
                 </div>
                 
-                <div class="feature-card">
-                    <h3 class="feature-title">실시간 검증</h3>
-                    <p class="feature-text">뉴스를 실시간으로 분석하여 신뢰도를 제공합니다</p>
+                <div class="stat-box warning">
+                    <div class="stat-icon">🧠</div>
+                    <div class="stat-number">73%</div>
+                    <div class="stat-text">확증편향에 의한 잘못된 정보 수용률</div>
+                    <div class="stat-source">자신의 기존 믿음과 일치하는 정보를 무비판적 수용</div>
+                    <div class="stat-detail">
+                        <p>• 반대 의견 회피: 68%</p>
+                        <p>• 감정적 반응 우선: 81%</p>
+                        <p>• 논리적 검증 생략: 76%</p>
+                    </div>
+                    <div class="stat-citation">출처: MIT Misinformation Research, 2024</div>
                 </div>
                 
-                <div class="feature-card">
-                    <h3 class="feature-title">교육 콘텐츠</h3>
-                    <p class="feature-text">미디어 리터러시 향상을 위한 교육 자료를 제공합니다</p>
+                <div class="stat-box danger">
+                    <div class="stat-icon">📱</div>
+                    <div class="stat-number">6초</div>
+                    <div class="stat-text">SNS에서 허위정보 판단에 소요되는 평균 시간</div>
+                    <div class="stat-source">빠른 스크롤링 문화로 심층 분석 능력 저하</div>
+                    <div class="stat-detail">
+                        <p>• 제목만 보고 판단: 89%</p>
+                        <p>• 본문 읽기 비율: 31%</p>
+                        <p>• 출처 확인: 12%</p>
+                    </div>
+                    <div class="stat-citation">출처: Stanford Digital Literacy Study, 2024</div>
+                </div>
+            </div>
+            
+            <div class="stats-conclusion">
+                <div class="conclusion-box">
+                    <h4>💡 해결책: 체계적인 편향 감지 훈련</h4>
+                    <p>단순한 팩트체킹을 넘어서, <strong>편향을 인식하고 분석하는 능력</strong>을 기르는 것이 디지털 시대 생존의 핵심입니다. FakeFilter는 게임을 통해 이러한 능력을 자연스럽게 습득할 수 있도록 설계되었습니다.</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Game Overview Section -->
+    <section id="game-methods" class="game-section">
+        <div class="section-container">
+            <h2 class="section-title">게임 방식</h2>
+            <div class="game-content">
+                <div class="game-description">
+                    <h3>🎯 AI 캐릭터와의 설득 대화를 통한 비판적 사고 훈련</h3>
+                    <p>편향된 시각을 가진 AI 캐릭터들과 대화를 나누며, 실제 가짜뉴스 사례를 분석하고 논리적으로 설득해보세요. 확증편향, 감정편향, 권위편향 등 다양한 인지편향을 체험하고 분별하는 훈련을 통해 디지털 시대의 진정한 미디어 리터러시를 키울 수 있습니다.</p>
+                </div>
+                
+                <div class="game-modes">
+                    <div class="mode-container daily-mode">
+                        <h3 class="mode-title">🌱 민지 모드 (초급)</h3>
+                        <p class="mode-subtitle">백신 부작용 가짜뉴스에 현혹된 20대 대학생</p>
+                        
+                        <p class="mode-description">개인 경험담을 과학적 근거보다 신뢰하는 감정적 편향을 가진 캐릭터입니다. 논리적이고 공감적인 소통을 통해 설득해보세요.</p>
+                        
+                        <ul class="mode-features">
+                            <li>감정적 반응 중심의 대화 패턴</li>
+                            <li>개인 경험담 의존 성향</li>
+                            <li>설득하기 쉬운 초급 난이도</li>
+                            <li>백신/의료 관련 가짜뉴스 사례</li>
+                            <li>5-10분 내 완료 가능한 짧은 세션</li>
+                        </ul>
+                        
+                        <div class="mode-goal">
+                            <span class="goal-icon">🎯</span>
+                            <span class="goal-text">목표: 감정 편향 인식 + 공감적 소통 기법 습득</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mode-divider"></div>
+                    
+                    <div class="mode-container scenario-mode">
+                        <h3 class="mode-title">🧠 석대 모드 (중급)</h3>
+                        <p class="mode-subtitle">지구온난화 회의론에 빠진 복합 편향 캐릭터</p>
+                        
+                        <p class="mode-description">4가지 인지편향(확증편향, 권위편향, 선택편향, 생존자편향)을 동시에 시뮬레이션하는 고도화된 AI 캐릭터입니다. 다층적 설득 전략이 필요합니다.</p>
+                        
+                        <ul class="mode-features">
+                            <li>확증편향: 온난화 = 세금 음모론</li>
+                            <li>권위편향: 소수 전문가 절대 신뢰</li>
+                            <li>선택편향: 음모론 커뮤니티 의존</li>
+                            <li>생존자편향: 부분적 데이터 과신</li>
+                            <li>AI 자동 평가 시스템으로 성공/실패 판정</li>
+                        </ul>
+                        
+                        <div class="mode-goal">
+                            <span class="goal-icon">🎯</span>
+                            <span class="goal-text">목표: 복합 편향 분해 + 체계적 논리 구성 능력</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">🔍</span>
+                        <span class="feature-text">실제 OpenAI GPT 기반 AI 대화</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💬</span>
+                        <span class="feature-text">자유로운 텍스트 기반 설득 시도</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🧠</span>
+                        <span class="feature-text">인지편향 약화 시스템</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <span class="feature-text">AI 기반 자동 평가 리포트</span>
+                    </div>
+                </div>
+                
+                <div class="call-to-action">
+                    <p>진짜 AI와의 설득 대화를 통한 비판적 사고 훈련, 지금 바로 체험해보세요!</p>
+                    <a href="gameplay.html" class="neon-button">게임 시작하기</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-logo">FAKEFILTER</div>
+            <div class="footer-text">&copy; 2077 TRUTH CORPS | 사이버펑크 교육 경험</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/neo_main.js"></script>
 </body>
 </html>

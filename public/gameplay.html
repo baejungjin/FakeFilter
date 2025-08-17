@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAKEFILTER - Gameplay</title>
+    <link rel="stylesheet" href="css/neo_style.css">
     
     <!-- 폰트 로딩 최적화 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     
     <style>
-        /* 폰트 로딩 fallback 추가 */
+        /* 게임플레이 전용 스타일 추가 */
 
         * {
             margin: 0;
@@ -262,19 +263,20 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 플로팅 메뉴 바 -->
-        <div class="floating-menu">
-            <div class="menu-logo">FAKEFILTER</div>
-            <div class="menu-items">
-                <div class="menu-item" onclick="window.location.href='index.html'">HOME</div>
-                <div class="menu-item" onclick="window.location.href='minji.html'">STATS</div>
-                <div class="menu-item active">GAMEPLAY</div>
-                <div class="menu-item">EDUCATION</div>
-                <div class="menu-item">LEARNING</div>
-                <div class="menu-item">AI TECH</div>
-            </div>
+    <div class="crt-overlay"></div>
+    
+    <!-- 플로팅 메뉴 바 -->
+    <div class="floating-menu">
+        <div class="menu-logo">FAKEFILTER</div>
+        <div class="menu-items">
+            <div class="menu-item" onclick="window.location.href='index.html'">HOME</div>
+            <div class="menu-item" onclick="window.location.href='gameplay.html'">GAMEPLAY</div>
+            <div class="menu-item" onclick="window.location.href='index.html#game-methods'">EDUCATION</div>
+            <div class="menu-item">AI TECH</div>
         </div>
+    </div>
+    
+    <div class="container" style="padding-top: 80px;">
         
         <div class="content">
             <h1 class="page-title">STAGE SELECT</h1>
@@ -333,5 +335,6 @@
             }
         }
     </script>
+    <script src="js/neo_main.js"></script>
 </body>
 </html>
