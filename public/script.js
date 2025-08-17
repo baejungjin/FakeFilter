@@ -252,14 +252,15 @@ document.addEventListener('DOMContentLoaded', function() {
                              document.body.getAttribute('data-character') === 'seokdae';
         
         // 다양한 패턴으로 파싱 시도
-        let resultMatch = aiResponse.match(/결과\s*:\s*(\S+)/);
+        let resultMatch = aiResponse.match(/결과\s*:\s*설득률\s*(\d+)%/) || aiResponse.match(/설득률\s*(\d+)%/);
         let advantageMatch = aiResponse.match(/장점\s*:\s*([\s\S]*?)(?=단점\s*:|개선|$)/);
         let disadvantageMatch = aiResponse.match(/(?:단점|개선.*?부분)\s*:\s*([\s\S]*?)$/);
         
-        // 대안 패턴들
+        // 대안 패턴들 (퍼센트 기반)
         if (!resultMatch) {
-            resultMatch = aiResponse.match(/설득.*?(성공|실패)/) || 
-                         aiResponse.match(/(성공|실패).*?설득/);
+            resultMatch = aiResponse.match(/(\d+)%/) || 
+                         aiResponse.match(/설득.*?(\d+)/) ||
+                         aiResponse.match(/성공.*?(\d+)/);
         }
         
         if (!advantageMatch) {
@@ -272,13 +273,13 @@ document.addEventListener('DOMContentLoaded', function() {
                               aiResponse.match(/(?:•|-)\s*([^\n]*(?:부족|개선|보완|아쉬운)[^\n]*)/);
         }
         
-        // 설득 결과 업데이트
+        // 설득 결과 업데이트 (퍼센트 기반)
         if (resultMatch) {
-            const result = resultMatch[1] ? resultMatch[1].trim() : resultMatch[0].includes('성공') ? '성공' : '실패';
-            updatePersuasionResult(result);
+            const percentage = parseInt(resultMatch[1]);
+            updatePersuasionResult(percentage);
         } else {
-            // 기본값으로 부분 성공 설정
-            updatePersuasionResult('부분성공');
+            // 기본값으로 25% 설정
+            updatePersuasionResult(25);
         }
         
         // 장점 업데이트
@@ -325,8 +326,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // 설득 결과 표시 함수
-    function updatePersuasionResult(result) {
+    // 설득 결과 표시 함수 (퍼센트 기반)
+    function updatePersuasionResult(percentage) {
         const persuasionElement = document.getElementById('persuasionResult');
         const resultTextElement = document.getElementById('resultText');
         
@@ -334,22 +335,25 @@ document.addEventListener('DOMContentLoaded', function() {
             // 기존 클래스 제거
             persuasionElement.classList.remove('success', 'failure', 'evaluating', 'partial');
             
-            // 결과에 따른 스타일 적용
-            if (result === '성공' || result.includes('성공')) {
+            // 퍼센트에 따른 스타일 적용
+            if (percentage >= 75) {
                 persuasionElement.classList.add('success');
-                resultTextElement.textContent = '설득 성공!';
-            } else if (result === '실패' || result.includes('실패')) {
-                persuasionElement.classList.add('failure');
-                resultTextElement.textContent = '설득 실패';
-            } else if (result === '부분성공' || result.includes('부분')) {
+                resultTextElement.textContent = `설득 성공! ${percentage}%`;
+            } else if (percentage >= 50) {
                 persuasionElement.classList.add('partial');
-                resultTextElement.textContent = '부분 성공';
+                resultTextElement.textContent = `부분 성공 ${percentage}%`;
+            } else if (percentage >= 25) {
+                persuasionElement.classList.add('partial');
+                resultTextElement.textContent = `설득률 ${percentage}%`;
+            } else if (percentage >= 0) {
+                persuasionElement.classList.add('failure');
+                resultTextElement.textContent = `설득률 ${percentage}%`;
             } else {
                 persuasionElement.classList.add('evaluating');
                 resultTextElement.textContent = '평가 중...';
             }
             
-            console.log('설득 결과 업데이트:', result);
+            console.log('설득 결과 업데이트:', percentage + '%');
         } else {
             console.error('설득 결과 표시 요소를 찾을 수 없습니다');
         }
