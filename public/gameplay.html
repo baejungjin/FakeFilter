@@ -283,11 +283,12 @@
             <p class="page-subtitle">도전할 스테이지를 선택하세요</p>
             
             <div class="stage-grid">
-                <!-- 스테이지 1 -->
-                <div class="stage-card" onclick="startStage(1)">
+                <!-- 스테이지 1 - 업데이트 중 -->
+                <div class="stage-card locked" onclick="startStage(1)">
+                    <div class="lock-icon">🔒</div>
                     <div class="stage-number">01</div>
                     <h3 class="stage-title">민지</h3>
-                    <p class="stage-description">백신부작용과 가짜뉴스때문에 두려워하는 민지</p>
+                    <p class="stage-description">업데이트 예정 - 백신부작용과 가짜뉴스때문에 두려워하는 민지</p>
                     <div class="difficulty-level">
                         <span class="difficulty-star">★</span>
                         <span class="difficulty-star empty">★</span>
@@ -296,7 +297,7 @@
                         <span class="difficulty-star empty">★</span>
                     </div>
                     <div class="stage-stats" style="justify-content: center;">
-                        <span class="stat-item">데일리모드</span>
+                        <span class="stat-item">업데이트 중</span>
                     </div>
                 </div>
 
@@ -324,8 +325,9 @@
     <script>
         function startStage(stageNumber) {
             if (stageNumber === 1) {
-                // 민지와의 대화창으로 이동
-                window.location.href = 'minji.html';
+                // 민지 스테이지 접근 제한
+                alert('⚠️ 업데이트 예정!\n\n민지와의 대화는 현재 업데이트 중입니다.\n잠시 후 다시 시도해주세요!');
+                return;
             } else if (stageNumber === 2) {
                 // 석대와의 대화창으로 이동
                 window.location.href = 'seokdae.html';

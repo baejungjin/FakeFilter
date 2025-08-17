@@ -105,11 +105,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
 
+            const data = await response.json();
+
+            // 민지 캐릭터 업데이트 상태 체크
+            if (!response.ok && data.updateStatus && character === 'minji') {
+                alert('⚠️ 업데이트 예정!\n\n민지와의 대화는 현재 업데이트 중입니다.\n잠시 후 다시 시도해주세요!');
+                return "죄송해요, 지금 업데이트 중이에요... 잠시 후 다시 시도해 주세요!";
+            }
+
             if (!response.ok) {
                 throw new Error(`서버 오류: ${response.status}`);
             }
-
-            const data = await response.json();
             
             // 대화 기록에 추가
             conversationHistory.push(

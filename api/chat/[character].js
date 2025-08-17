@@ -76,7 +76,7 @@ const CHARACTER_PROMPTS = {
 **평가 형태**:
 결과: 성공 (또는 실패)
 
-장점: (사용자가 설득을 잘한 점 3가지를 각각 한 줄씩, 없으면 "더 노력하세요!")
+장점: (사용자가 설득을 잘한 점 3가지를 각각 한 줄씩, 없으면 "더 노력해 보세요!")
 
 단점: (사용자의 개선점 3가지를 각각 한 줄씩, 없으면 "완벽해요!")
 
@@ -189,6 +189,16 @@ module.exports = async function handler(req, res) {
             return res.status(400).json({ 
                 error: '지원하지 않는 캐릭터입니다',
                 supportedCharacters: Object.keys(CHARACTER_PROMPTS)
+            });
+        }
+
+        // 민지 캐릭터 접근 제한
+        if (character === 'minji') {
+            return res.status(503).json({
+                error: '업데이트 예정',
+                message: '민지와의 대화는 현재 업데이트 중입니다. 잠시 후 다시 시도해주세요.',
+                character: 'minji',
+                updateStatus: true
             });
         }
 
