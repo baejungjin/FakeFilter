@@ -241,27 +241,73 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateReportWithEvaluation(aiResponse) {
         console.log('AI 평가 파싱 중:', aiResponse);
         
-        // "결과:", "장점:", "단점:" 부분을 파싱
-        const resultMatch = aiResponse.match(/결과\s*:\s*(\S+)/);
-        const advantageMatch = aiResponse.match(/장점\s*:\s*([\s\S]*?)(?=단점\s*:|$)/);
-        const disadvantageMatch = aiResponse.match(/단점\s*:\s*([\s\S]*?)$/);
+        // 석대 페이지인지 확인
+        const isSeokdaePage = document.body.hasAttribute('data-character') && 
+                             document.body.getAttribute('data-character') === 'seokdae';
+        
+        // 다양한 패턴으로 파싱 시도
+        let resultMatch = aiResponse.match(/결과\s*:\s*(\S+)/);
+        let advantageMatch = aiResponse.match(/장점\s*:\s*([\s\S]*?)(?=단점\s*:|개선|$)/);
+        let disadvantageMatch = aiResponse.match(/(?:단점|개선.*?부분)\s*:\s*([\s\S]*?)$/);
+        
+        // 대안 패턴들
+        if (!resultMatch) {
+            resultMatch = aiResponse.match(/설득.*?(성공|실패)/) || 
+                         aiResponse.match(/(성공|실패).*?설득/);
+        }
+        
+        if (!advantageMatch) {
+            advantageMatch = aiResponse.match(/(?:좋은.*?점|성공.*?요인|잘한.*?점)\s*[:\-]?\s*([\s\S]*?)(?=(?:부족|개선|단점|아쉬운)|$)/) ||
+                           aiResponse.match(/(?:•|-)\s*([^\n]*(?:좋|성공|효과|설득)[^\n]*)/);
+        }
+        
+        if (!disadvantageMatch) {
+            disadvantageMatch = aiResponse.match(/(?:부족|개선|단점|아쉬운).*?[:\-]?\s*([\s\S]*?)$/) ||
+                              aiResponse.match(/(?:•|-)\s*([^\n]*(?:부족|개선|보완|아쉬운)[^\n]*)/);
+        }
         
         // 설득 결과 업데이트
         if (resultMatch) {
-            const result = resultMatch[1].trim();
+            const result = resultMatch[1] ? resultMatch[1].trim() : resultMatch[0].includes('성공') ? '성공' : '실패';
             updatePersuasionResult(result);
+        } else {
+            // 기본값으로 부분 성공 설정
+            updatePersuasionResult('부분성공');
         }
         
         // 장점 업데이트
         if (advantageMatch) {
-            const advantages = advantageMatch[1].trim().split('\n').filter(line => line.trim());
+            let advantages = advantageMatch[1].trim().split(/[\n•-]/).filter(line => line.trim() && line.length > 3);
+            if (advantages.length === 0) {
+                advantages = ['논리적인 접근을 시도했습니다', '상대방의 입장을 이해하려고 노력했습니다'];
+            }
             updateReportSection('advantages', advantages);
+        } else {
+            // 기본 장점 제공
+            const defaultAdvantages = isSeokdaePage ? 
+                ['복합적 편향에 대한 이해를 보여주었습니다', '논리적 근거를 제시하려고 노력했습니다'] :
+                ['공감적 소통을 시도했습니다', '신뢰할 수 있는 정보를 제공하려고 했습니다'];
+            updateReportSection('advantages', defaultAdvantages);
         }
         
         // 단점 업데이트
         if (disadvantageMatch) {
-            const disadvantages = disadvantageMatch[1].trim().split('\n').filter(line => line.trim());
+            let disadvantages = disadvantageMatch[1].trim().split(/[\n•-]/).filter(line => line.trim() && line.length > 3);
+            if (disadvantages.length === 0) {
+                disadvantages = ['더 체계적인 접근이 필요합니다', '상대방의 핵심 편향을 정확히 파악하는 것이 중요합니다'];
+            }
             updateReportSection('disadvantages', disadvantages);
+        } else {
+            // 기본 개선점 제공
+            const defaultDisadvantages = isSeokdaePage ? 
+                ['각 편향을 단계별로 접근하는 전략이 필요합니다', '감정적 공감대 형성을 먼저 시도해보세요'] :
+                ['과학적 근거와 개인 경험의 균형을 맞춰보세요', '단계적 설득보다는 공감대 형성을 우선해보세요'];
+            updateReportSection('disadvantages', defaultDisadvantages);
+        }
+        
+        // 석대 페이지인 경우 편향 정보 추가
+        if (isSeokdaePage) {
+            updateSeokdaeBiasInfo();
         }
     }
     
@@ -272,15 +318,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (persuasionElement && resultTextElement) {
             // 기존 클래스 제거
-            persuasionElement.classList.remove('success', 'failure', 'evaluating');
+            persuasionElement.classList.remove('success', 'failure', 'evaluating', 'partial');
             
             // 결과에 따른 스타일 적용
-            if (result === '성공') {
+            if (result === '성공' || result.includes('성공')) {
                 persuasionElement.classList.add('success');
                 resultTextElement.textContent = '설득 성공!';
-            } else if (result === '실패') {
+            } else if (result === '실패' || result.includes('실패')) {
                 persuasionElement.classList.add('failure');
                 resultTextElement.textContent = '설득 실패';
+            } else if (result === '부분성공' || result.includes('부분')) {
+                persuasionElement.classList.add('partial');
+                resultTextElement.textContent = '부분 성공';
             } else {
                 persuasionElement.classList.add('evaluating');
                 resultTextElement.textContent = '평가 중...';
@@ -300,11 +349,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
             targetElement.innerHTML = items.map(item => 
-                `<p>• ${item.replace(/^-\s*/, '').trim()}</p>`
+                `<p>• ${item.replace(/^[•\-]\s*/, '').trim()}</p>`
             ).join('');
             console.log(`${isAdvantage ? '장점' : '단점'} 섹션 업데이트 완료:`, items);
         } else {
             console.error(`${targetId} 요소를 찾을 수 없습니다`);
+        }
+    }
+    
+    // 석대의 편향 정보를 업데이트하는 함수
+    function updateSeokdaeBiasInfo() {
+        const biasSection = document.getElementById('biasSection');
+        if (biasSection) {
+            biasSection.style.display = 'block';
+            console.log('석대의 인지편향 분석 섹션 표시됨');
         }
     }
 
@@ -318,12 +376,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // 대화 수 계산
+        // 대화 수 계산 ("보고서 제출" 메시지 제외하기 위해 -1)
         const userMessages = chatMessages.querySelectorAll('.user-message');
         const messageCountElement = document.getElementById('messageCount');
         
         if (messageCountElement) {
-            messageCountElement.textContent = userMessages.length;
+            const actualCount = Math.max(0, userMessages.length - 1); // "보고서 제출" 메시지 제외
+            messageCountElement.textContent = actualCount;
         }
         
         console.log('팝업 표시 중...');
