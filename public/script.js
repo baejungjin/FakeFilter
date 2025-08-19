@@ -28,6 +28,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextStageButton = document.getElementById('nextStageButton');
     
     // 디버깅: 요소들이 제대로 선택되었는지 확인
+    console.log('Internet popup elements:', {
+        internetButton: !!internetButton,
+        internetPopup: !!internetPopup,
+        closePopup: !!closePopup,
+        messageInput: !!messageInput,
+        sendButton: !!sendButton
+    });
+    
     console.log('Report popup elements:', {
         submitButton: !!submitButton,
         reportPopup: !!reportPopup,
@@ -164,34 +172,84 @@ document.addEventListener('DOMContentLoaded', function() {
 
     sendButton.addEventListener('click', sendMessage);
     
-    internetButton.addEventListener('click', function() {
-        internetPopup.style.display = 'flex';
-        setTimeout(() => {
-            internetPopup.classList.add('show');
-        }, 10);
-    });
-    
-    function closeInternetPopup() {
-        internetPopup.classList.remove('show');
-        setTimeout(() => {
-            internetPopup.style.display = 'none';
-        }, 400);
+    // 인터넷 버튼 이벤트 리스너
+    if (internetButton && internetPopup) {
+        console.log('Adding internet button event listener');
+        
+        // 테스트를 위해 버튼에 직접 스타일 추가
+        internetButton.style.zIndex = '9999';
+        internetButton.style.pointerEvents = 'auto';
+        internetButton.style.position = 'relative';
+        
+        internetButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Internet button clicked!');
+            console.log('internetPopup element:', internetPopup);
+            console.log('Current popup display:', internetPopup.style.display);
+            
+            internetPopup.style.display = 'flex';
+            internetPopup.style.zIndex = '10000';
+            
+            setTimeout(() => {
+                internetPopup.classList.add('show');
+                console.log('Popup should now be visible');
+            }, 10);
+        });
+        
+        // 추가: 마우스 오버 테스트
+        internetButton.addEventListener('mouseover', function() {
+            console.log('Mouse over internet button');
+        });
+        
+    } else {
+        console.error('Internet button or popup elements not found:', {
+            internetButton: internetButton,
+            internetPopup: internetPopup
+        });
     }
     
-    closePopup.addEventListener('click', closeInternetPopup);
-    
-    internetPopup.addEventListener('click', function(e) {
-        if (e.target === internetPopup) {
-            closeInternetPopup();
+    function closeInternetPopup() {
+        if (internetPopup) {
+            internetPopup.classList.remove('show');
+            setTimeout(() => {
+                internetPopup.style.display = 'none';
+            }, 400);
         }
-    });
+    }
+    
+    if (closePopup) {
+        closePopup.addEventListener('click', closeInternetPopup);
+    }
+    
+    if (internetPopup) {
+        internetPopup.addEventListener('click', function(e) {
+            if (e.target === internetPopup) {
+                closeInternetPopup();
+            }
+        });
+    }
     
     
-    // 엔터 키로 메시지 전송
+    // 엔터 키로 메시지 전송 및 I키로 인터넷 팝업 열기
     messageInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
             sendMessage();
+        }
+    });
+    
+    // 키보드 단축키로 인터넷 팝업 열기 (I 키)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'i' || e.key === 'I') {
+            if (internetPopup && internetButton) {
+                console.log('I key pressed - opening internet popup');
+                internetPopup.style.display = 'flex';
+                internetPopup.style.zIndex = '10000';
+                setTimeout(() => {
+                    internetPopup.classList.add('show');
+                }, 10);
+            }
         }
     });
 
