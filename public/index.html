@@ -21,7 +21,7 @@
             <div class="menu-item" onclick="window.location.href='index.html'">HOME</div>
             <div class="menu-item" onclick="window.location.href='gameplay.html'">GAMEPLAY</div>
             <div class="menu-item" onclick="smoothScrollToSection('game-methods')">EDUCATION</div>
-            <div class="menu-item" onclick="scrollToOpenAIFeature()">AI TECH</div>
+            <div class="menu-item" onclick="smoothScrollToSection('game-features')">AI TECH</div>
         </div>
     </div>
 
@@ -196,20 +196,5 @@
 
     <!-- Scripts -->
     <script src="js/neo_main.js"></script>
-    <script>
-        function scrollToOpenAIFeature() {
-            const openAIFeature = document.getElementById('openai-feature');
-            if (openAIFeature) {
-                // 플로팅 메뉴 높이를 고려한 오프셋 (80px)
-                const menuOffset = 80;
-                const targetPosition = openAIFeature.offsetTop - menuOffset;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        }
-    </script>
 </body>
 </html>
