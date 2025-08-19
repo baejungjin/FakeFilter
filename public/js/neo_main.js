@@ -177,17 +177,38 @@ function typeTerminalText(element, text, speed = 50) {
     }, speed);
 }
 
-// Smooth scroll to section (for EDUCATION button)
+// Smooth scroll to section (for EDUCATION and AI TECH buttons)
 function smoothScrollToSection(sectionId) {
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
-        // 플로팅 메뉴 높이를 고려한 오프셋 (80px)
-        const menuOffset = 80;
-        const targetPosition = targetSection.offsetTop - menuOffset;
+        // 플로팅 메뉴와 여백을 고려한 오프셋
+        const menuOffset = 120;
+        
+        // getBoundingClientRect()를 사용하여 더 정확한 위치 계산
+        const rect = targetSection.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const targetPosition = rect.top + scrollTop - menuOffset;
+        
+        console.log(`Scrolling to ${sectionId}:`, {
+            element: targetSection,
+            boundingRect: rect,
+            scrollTop: scrollTop,
+            targetPosition: targetPosition
+        });
         
         window.scrollTo({
             top: targetPosition,
             behavior: 'smooth'
         });
+        
+        // 강제로 해당 요소에 하이라이트 효과 추가 (시각적 확인용)
+        targetSection.style.transition = 'box-shadow 0.3s ease';
+        targetSection.style.boxShadow = '0 0 20px rgba(0, 255, 255, 0.5)';
+        setTimeout(() => {
+            targetSection.style.boxShadow = '';
+        }, 2000);
+        
+    } else {
+        console.error(`Element with id "${sectionId}" not found`);
     }
 }
