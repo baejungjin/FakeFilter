@@ -137,7 +137,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 이벤트 리스너 등록
     if (sendButton) {
-        sendButton.addEventListener('click', sendMessage);
+        console.log('Adding send button event listener');
+        sendButton.addEventListener('click', function(e) {
+            console.log('Send button clicked!');
+            e.preventDefault();
+            sendMessage();
+        });
+    } else {
+        console.error('Send button not found!');
     }
     
     if (messageInput) {
@@ -153,6 +160,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 sendButton.style.opacity = this.value.trim() ? '1' : '0.7';
             }
         });
+        
+        // 포커스 주기
+        messageInput.focus();
+    } else {
+        console.error('Message input not found!');
     }
 
     // 인터넷 팝업 관련 - 강화된 버전
@@ -164,11 +176,19 @@ document.addEventListener('DOMContentLoaded', function() {
         internetButton.style.position = 'relative';
         internetButton.style.pointerEvents = 'auto';
         internetButton.style.cursor = 'pointer';
+        internetButton.style.backgroundColor = 'white';
+        internetButton.style.border = 'none';
         
-        internetButton.addEventListener('click', function(e) {
+        // 기존 이벤트 리스너 제거 후 새로 추가
+        internetButton.removeEventListener('click', openInternetPopup);
+        internetButton.onclick = null;
+        
+        function openInternetPopup(e) {
             console.log('Internet button clicked!');
-            e.preventDefault();
-            e.stopPropagation();
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             
             // 팝업 표시 - 강제적으로
             internetPopup.style.display = 'flex';
@@ -180,22 +200,23 @@ document.addEventListener('DOMContentLoaded', function() {
             internetPopup.style.left = '0';
             internetPopup.style.width = '100%';
             internetPopup.style.height = '100%';
+            internetPopup.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
             
             setTimeout(() => {
                 internetPopup.classList.add('show');
             }, 10);
-        });
+        }
+        
+        // 여러 방법으로 이벤트 추가
+        internetButton.addEventListener('click', openInternetPopup);
+        internetButton.addEventListener('mousedown', openInternetPopup);
+        internetButton.onclick = openInternetPopup;
         
         // 키보드 단축키도 작동하도록 확실히
         document.addEventListener('keydown', function(e) {
             if ((e.key === 'i' || e.key === 'I') && !e.ctrlKey && !e.altKey && !e.metaKey) {
-                internetPopup.style.display = 'flex';
-                internetPopup.style.visibility = 'visible';
-                internetPopup.style.opacity = '1';
-                internetPopup.style.zIndex = '99999';
-                setTimeout(() => {
-                    internetPopup.classList.add('show');
-                }, 10);
+                console.log('I key pressed - opening popup');
+                openInternetPopup();
             }
         });
     } else {
@@ -568,6 +589,55 @@ ${context}
     
     // 페이지 로드 시 이벤트 리스너 추가
     addContentClickListeners();
+
+    // Submit 버튼 이벤트 리스너 추가
+    if (submitButton) {
+        console.log('Adding submit button event listener');
+        submitButton.addEventListener('click', function(e) {
+            console.log('Submit button clicked!');
+            e.preventDefault();
+            
+            const messages = chatMessages.querySelectorAll('.message');
+            
+            if (messages.length <= 1) {
+                alert('대화를 나눈 후 제출해주세요!');
+                return;
+            }
+            
+            const result = confirm('석대와의 대화를 제출하시겠습니까?\n\n학습 완료 보고서가 생성됩니다.');
+            
+            if (result) {
+                console.log('제출 확인 - 보고서 제출 메시지 전송');
+                
+                // 자동으로 "보고서 제출" 메시지 전송
+                addMessage('보고서 제출', true);
+                if (messageInput) messageInput.value = '';
+                
+                // AI 응답 대기 후 보고서 팝업 표시
+                setTimeout(async () => {
+                    try {
+                        const botResponse = await getBotResponse('보고서 제출');
+                        addMessage(botResponse, false);
+                        
+                    } catch (error) {
+                        console.error('보고서 제출 응답 오류:', error);
+                        addMessage('학습이 완료되었습니다. 수고하셨습니다!', false);
+                    }
+                    
+                    // 제출 버튼 비활성화
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'COMPLETED';
+                    submitButton.style.opacity = '0.6';
+                    submitButton.style.cursor = 'not-allowed';
+                    
+                    // 보고서 팝업 표시 로직은 script.js에서 처리됨
+                    
+                }, 500);
+            }
+        });
+    } else {
+        console.error('Submit button not found!');
+    }
 
     // ESC키로 모달 닫기
     document.addEventListener('keydown', function(e) {

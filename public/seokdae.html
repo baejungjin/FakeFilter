@@ -75,7 +75,7 @@
             <div class="input-wrapper">
                 <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." autocomplete="off">
                 <div class="floating-buttons">
-                    <button id="internetButton" onclick="openInternetPopupDirect()">🌐</button>
+                    <button id="internetButton">🌐</button>
                     <button id="sendButton">전송</button>
                 </div>
             </div>
@@ -280,75 +280,6 @@
         </div>
     </div>
     
-    <script>
-        // EMERGENCY INLINE SCRIPT - 직접 DOM 조작
-        console.log('EMERGENCY SCRIPT LOADING...');
-        
-        function openInternetPopupDirect() {
-            console.log('DIRECT ONCLICK TRIGGERED!');
-            alert('DIRECT ONCLICK WORKING!');
-            
-            const popup = document.getElementById('internetPopup');
-            if (popup) {
-                console.log('Popup found, opening...');
-                popup.style.display = 'flex';
-                popup.style.position = 'fixed';
-                popup.style.top = '0';
-                popup.style.left = '0';
-                popup.style.width = '100vw';
-                popup.style.height = '100vh';
-                popup.style.zIndex = '999999';
-                popup.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                popup.style.visibility = 'visible';
-                popup.style.opacity = '1';
-                popup.classList.add('show');
-            } else {
-                alert('POPUP NOT FOUND!');
-                console.error('internetPopup element not found');
-            }
-        }
-        
-        // DOMContentLoaded에서도 시도
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM LOADED - Setting up emergency handlers');
-            
-            const internetButton = document.getElementById('internetButton');
-            const popup = document.getElementById('internetPopup');
-            
-            console.log('Elements:', { button: !!internetButton, popup: !!popup });
-            
-            if (internetButton) {
-                // 여러 방법으로 이벤트 추가
-                internetButton.addEventListener('click', function(e) {
-                    console.log('EVENT LISTENER CLICK!');
-                    openInternetPopupDirect();
-                });
-                
-                internetButton.onmousedown = function() {
-                    console.log('ONMOUSEDOWN TRIGGERED!');
-                    openInternetPopupDirect();
-                };
-                
-                // 스타일 강제 적용
-                internetButton.style.backgroundColor = 'red';
-                internetButton.style.border = '3px solid yellow';
-                internetButton.style.zIndex = '999999';
-                internetButton.style.position = 'relative';
-                internetButton.style.pointerEvents = 'auto';
-                internetButton.style.cursor = 'pointer';
-                
-                console.log('Button setup complete');
-            }
-            
-            // 키보드로도 테스트
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'i' || e.key === 'I') {
-                    console.log('I KEY PRESSED!');
-                    openInternetPopupDirect();
-                }
-            });
-        });
-    </script>
     <script src="seokdae-complete.js"></script>
     <script src="js/neo_main.js"></script>
 </body>
