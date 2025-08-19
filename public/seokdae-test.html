@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>석대와의 대화 - 테스트</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        
+        #internetButton {
+            padding: 10px 20px;
+            background: red;
+            color: white;
+            border: 3px solid yellow;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            position: relative;
+            z-index: 999999;
+            pointer-events: auto;
+        }
+        
+        #internetButton:hover {
+            background: darkred;
+        }
+        
+        #internetPopup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 999999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .popup-content {
+            background: white;
+            color: black;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        #closePopup {
+            background: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>인터넷 버튼 테스트</h1>
+    <p>아래 빨간 버튼을 클릭하거나 'I' 키를 눌러보세요:</p>
+    
+    <button id="internetButton" onclick="openPopup()">🌐 인터넷 버튼</button>
+    
+    <div id="internetPopup">
+        <div class="popup-content">
+            <h2>SUCCESS! 인터넷 팝업이 열렸습니다!</h2>
+            <p>이 테스트가 성공했다면 버튼 클릭이 정상 작동합니다.</p>
+            <button id="closePopup" onclick="closePopup()">닫기</button>
+        </div>
+    </div>
+    
+    <script>
+        console.log('TEST PAGE LOADED');
+        
+        function openPopup() {
+            console.log('OPEN POPUP CALLED');
+            const popup = document.getElementById('internetPopup');
+            popup.style.display = 'flex';
+            alert('팝업이 열렸습니다!');
+        }
+        
+        function closePopup() {
+            console.log('CLOSE POPUP CALLED');
+            const popup = document.getElementById('internetPopup');
+            popup.style.display = 'none';
+        }
+        
+        // I키로도 열기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'i' || e.key === 'I') {
+                console.log('I KEY PRESSED');
+                openPopup();
+            }
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+        
+        // DOM 로드 후 이벤트 리스너 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM LOADED');
+            const button = document.getElementById('internetButton');
+            
+            button.addEventListener('click', function() {
+                console.log('EVENT LISTENER CLICK');
+                openPopup();
+            });
+            
+            // 추가 테스트
+            button.onmousedown = function() {
+                console.log('MOUSE DOWN');
+            };
+            
+            button.onmouseup = function() {
+                console.log('MOUSE UP');
+            };
+        });
+    </script>
+</body>
+</html>
