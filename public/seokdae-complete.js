@@ -155,18 +155,53 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 인터넷 팝업 관련
+    // 인터넷 팝업 관련 - 강화된 버전
     if (internetButton && internetPopup) {
         console.log('Setting up internet popup');
+        
+        // 버튼 스타일 강제 적용 (클릭 가능하게)
+        internetButton.style.zIndex = '9999';
+        internetButton.style.position = 'relative';
+        internetButton.style.pointerEvents = 'auto';
+        internetButton.style.cursor = 'pointer';
+        
         internetButton.addEventListener('click', function(e) {
             console.log('Internet button clicked!');
             e.preventDefault();
             e.stopPropagation();
+            
+            // 팝업 표시 - 강제적으로
             internetPopup.style.display = 'flex';
-            internetPopup.style.zIndex = '10000';
+            internetPopup.style.visibility = 'visible';
+            internetPopup.style.opacity = '1';
+            internetPopup.style.zIndex = '99999';
+            internetPopup.style.position = 'fixed';
+            internetPopup.style.top = '0';
+            internetPopup.style.left = '0';
+            internetPopup.style.width = '100%';
+            internetPopup.style.height = '100%';
+            
             setTimeout(() => {
                 internetPopup.classList.add('show');
             }, 10);
+        });
+        
+        // 키보드 단축키도 작동하도록 확실히
+        document.addEventListener('keydown', function(e) {
+            if ((e.key === 'i' || e.key === 'I') && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                internetPopup.style.display = 'flex';
+                internetPopup.style.visibility = 'visible';
+                internetPopup.style.opacity = '1';
+                internetPopup.style.zIndex = '99999';
+                setTimeout(() => {
+                    internetPopup.classList.add('show');
+                }, 10);
+            }
+        });
+    } else {
+        console.error('Internet button or popup not found!', {
+            button: !!internetButton,
+            popup: !!internetPopup
         });
     }
     
@@ -534,19 +569,8 @@ ${context}
     // 페이지 로드 시 이벤트 리스너 추가
     addContentClickListeners();
 
-    // 키보드 단축키 (I키로 인터넷 팝업)
+    // ESC키로 모달 닫기
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'i' || e.key === 'I') {
-            if (internetPopup && internetButton && !e.ctrlKey && !e.altKey && !e.metaKey) {
-                internetPopup.style.display = 'flex';
-                internetPopup.style.zIndex = '10000';
-                setTimeout(() => {
-                    internetPopup.classList.add('show');
-                }, 10);
-            }
-        }
-        
-        // ESC키로 모달 닫기
         if (e.key === 'Escape') {
             if (articleModal && articleModal.classList.contains('show')) {
                 hideArticleDetail();
