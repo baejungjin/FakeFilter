@@ -1,4 +1,7 @@
 // 가장 간단한 방식으로 다시 시작
+// 전역 변수
+let conversationHistory = [];
+
 window.onload = function() {
     console.log('페이지 완전 로드됨');
     
@@ -61,21 +64,109 @@ window.onload = function() {
                 // 스크롤 맨 아래로
                 chatMsg.scrollTop = chatMsg.scrollHeight;
                 
-                // 봇 응답 (간단히)
-                setTimeout(function() {
-                    const botDiv = document.createElement('div');
-                    botDiv.className = 'message bot-message';
-                    botDiv.innerHTML = `
-                        <div class="profile-image" style="background-image: url('https://i.imgur.com/tRcnjyX.png'); background-size: cover; background-position: center;"></div>
-                        <div class="message-container">
-                            <div class="message-content">
-                                <div class="user-label">석대</div>
-                                <div>네, 말씀하신 내용에 대해 생각해보겠습니다.</div>
+                // 대화 기록 유지
+                
+                // API로 봇 응답 받기
+                setTimeout(async function() {
+                    try {
+                        console.log('석대 API 호출 중...');
+                        
+                        // 현재 URL이 localhost인지 확인
+                        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                        const apiUrl = isLocalhost ? '/api/chat/seokdae' : 'https://your-vercel-domain.vercel.app/api/chat/seokdae';
+                        
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                message: msg,
+                                history: conversationHistory.slice(-10)
+                            })
+                        });
+                        
+                        console.log('응답 상태:', response.status);
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            console.error('서버 오류 응답:', errorData);
+                            throw new Error(`Server error: ${response.status} - ${errorData.error || 'Unknown error'}`);
+                        }
+                        
+                        const data = await response.json();
+                        console.log('석대 API 응답:', data);
+                        
+                        if (!data.response) {
+                            throw new Error('응답 데이터가 없습니다');
+                        }
+                        
+                        // 대화 기록에 추가
+                        conversationHistory.push(
+                            { role: "user", content: msg },
+                            { role: "assistant", content: data.response }
+                        );
+                        
+                        const botDiv = document.createElement('div');
+                        botDiv.className = 'message bot-message';
+                        botDiv.innerHTML = `
+                            <div class="profile-image" style="background-image: url('https://i.imgur.com/tRcnjyX.png'); background-size: cover; background-position: center;"></div>
+                            <div class="message-container">
+                                <div class="message-content">
+                                    <div class="user-label">석대</div>
+                                    <div>${data.response}</div>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                    chatMsg.appendChild(botDiv);
-                    chatMsg.scrollTop = chatMsg.scrollHeight;
+                        `;
+                        chatMsg.appendChild(botDiv);
+                        chatMsg.scrollTop = chatMsg.scrollHeight;
+                        
+                    } catch (error) {
+                        console.error('석대 API 오류:', error);
+                        
+                        // 석대 스타일의 폴백 응답들
+                        const fallbackResponses = [
+                            "야, 지금 좀 바빠서 그런데... 뭐라고 했냐? ㅋㅋ",
+                            "아 잠깐, 생각 좀 하고 있었어. 다시 말해봐.",
+                            "어? 뭔가 이상하네... 아무튼 내 말은 그거야.",
+                            "잠시만, 다시 정리해서 말할게. 기다려봐 ㅋㅋ",
+                            "아 시스템이 좀 이상한가? 그래도 내 생각은 변함없어."
+                        ];
+                        
+                        const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+                        
+                        const botDiv = document.createElement('div');
+                        botDiv.className = 'message bot-message';
+                        botDiv.innerHTML = `
+                            <div class="profile-image" style="background-image: url('https://i.imgur.com/tRcnjyX.png'); background-size: cover; background-position: center;"></div>
+                            <div class="message-container">
+                                <div class="message-content">
+                                    <div class="user-label">석대</div>
+                                    <div>${randomResponse}</div>
+                                </div>
+                            </div>
+                        `;
+                        chatMsg.appendChild(botDiv);
+                        chatMsg.scrollTop = chatMsg.scrollHeight;
+                        
+                        // 5초 후 다시 시도 제안
+                        setTimeout(() => {
+                            const retryDiv = document.createElement('div');
+                            retryDiv.className = 'message bot-message';
+                            retryDiv.innerHTML = `
+                                <div class="profile-image" style="background-image: url('https://i.imgur.com/tRcnjyX.png'); background-size: cover; background-position: center;"></div>
+                                <div class="message-container">
+                                    <div class="message-content">
+                                        <div class="user-label">석대</div>
+                                        <div>아, 그리고 서버 연결이 좀 불안정한 것 같은데... 혹시 다시 말해줄래? ㅋㅋ</div>
+                                    </div>
+                                </div>
+                            `;
+                            chatMsg.appendChild(retryDiv);
+                            chatMsg.scrollTop = chatMsg.scrollHeight;
+                        }, 5000);
+                    }
                 }, 1000);
             }
         };
