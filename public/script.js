@@ -203,17 +203,59 @@ window.onload = function() {
             if (confirm('석대와의 대화를 제출하시겠습니까?\n\n학습 완료 보고서가 생성됩니다.')) {
                 console.log('사용자가 제출을 확인함');
                 
-                // 메시지 개수 업데이트
-                const messageCount = document.getElementById('messageCount');
-                if (messageCount) {
-                    messageCount.textContent = messages.length;
-                }
+                // API로 "보고서제출" 메시지 전송
+                setTimeout(async function() {
+                    try {
+                        console.log('보고서제출 API 호출 중...');
+                        
+                        const response = await fetch('/api/chat/seokdae', {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                message: "보고서제출",
+                                history: conversationHistory.slice(-10)
+                            })
+                        });
+                        
+                        console.log('보고서제출 응답 상태:', response.status);
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            console.error('보고서제출 서버 오류:', errorData);
+                            throw new Error(`Server error: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        console.log('보고서제출 API 응답:', data);
+                        
+                        if (data.response) {
+                            // API 응답에서 평가 정보 파싱
+                            const evaluation = parseEvaluationResponse(data.response);
+                            
+                            // 보고서 UI 업데이트
+                            updateReportUI(evaluation, messages.length);
+                        }
+                        
+                    } catch (error) {
+                        console.error('보고서제출 API 오류:', error);
+                        // 기본 보고서 표시
+                        updateReportUI({ 
+                            result: '평가 중 오류 발생', 
+                            advantages: ['다시 시도해주세요'], 
+                            disadvantages: ['서버 연결을 확인해주세요'] 
+                        }, messages.length);
+                    }
+                }, 500);
                 
+                // 보고서 팝업 표시
                 reportPop.style.display = 'flex';
                 reportPop.style.visibility = 'visible';
                 reportPop.style.opacity = '1';
                 reportPop.classList.add('show');
-                console.log('보고서 팝업이 열렸어야 함');
+                console.log('보고서 팝업 열림');
             } else {
                 console.log('사용자가 제출을 취소함');
             }
@@ -549,3 +591,116 @@ window.onload = function() {
     console.log('reportPopup:', !!reportPop);
     console.log('items:', items.length);
 };
+
+// 평가 응답 파싱 함수
+function parseEvaluationResponse(responseText) {
+    console.log('파싱할 평가 응답:', responseText);
+    
+    const evaluation = {
+        result: '평가 중...',
+        advantages: [],
+        disadvantages: []
+    };
+    
+    try {
+        // "결과:" 부분 추출
+        const resultMatch = responseText.match(/결과:\s*(.+?)(?=\n|장점:|단점:|$)/s);
+        if (resultMatch) {
+            evaluation.result = resultMatch[1].trim();
+        }
+        
+        // "장점:" 부분 추출
+        const advantagesMatch = responseText.match(/장점:\s*([\s\S]*?)(?=단점:|$)/);
+        if (advantagesMatch) {
+            const advantagesText = advantagesMatch[1].trim();
+            if (advantagesText === "좀 더 노력해 보세요!") {
+                evaluation.advantages = [advantagesText];
+            } else {
+                // 줄바꿈으로 나누어 각 장점 추출
+                evaluation.advantages = advantagesText.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0)
+                    .map(line => line.replace(/^-\s*/, ''));
+            }
+        }
+        
+        // "단점:" 부분 추출
+        const disadvantagesMatch = responseText.match(/단점:\s*([\s\S]*?)$/);
+        if (disadvantagesMatch) {
+            const disadvantagesText = disadvantagesMatch[1].trim();
+            if (disadvantagesText === "완벽해요!") {
+                evaluation.disadvantages = [disadvantagesText];
+            } else {
+                // 줄바꿈으로 나누어 각 단점 추출
+                evaluation.disadvantages = disadvantagesText.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0)
+                    .map(line => line.replace(/^-\s*/, ''));
+            }
+        }
+        
+    } catch (error) {
+        console.error('평가 응답 파싱 오류:', error);
+    }
+    
+    console.log('파싱된 평가:', evaluation);
+    return evaluation;
+}
+
+// 보고서 UI 업데이트 함수
+function updateReportUI(evaluation, messageCount) {
+    console.log('보고서 UI 업데이트:', evaluation);
+    
+    // 메시지 개수 업데이트
+    const messageCountEl = document.getElementById('messageCount');
+    if (messageCountEl) {
+        messageCountEl.textContent = messageCount;
+    }
+    
+    // 설득 결과 업데이트
+    const resultTextEl = document.getElementById('resultText');
+    if (resultTextEl) {
+        resultTextEl.textContent = evaluation.result;
+        
+        // 설득률에 따라 색상 변경
+        const persuasionMatch = evaluation.result.match(/(\d+)%/);
+        if (persuasionMatch) {
+            const percentage = parseInt(persuasionMatch[1]);
+            const resultEl = document.getElementById('persuasionResult');
+            if (resultEl) {
+                resultEl.className = 'persuasion-result';
+                if (percentage >= 70) {
+                    resultEl.classList.add('success');
+                } else if (percentage >= 40) {
+                    resultEl.classList.add('partial');
+                } else {
+                    resultEl.classList.add('failure');
+                }
+            }
+        }
+    }
+    
+    // 장점 업데이트
+    const advantagesContentEl = document.getElementById('advantagesContent');
+    if (advantagesContentEl && evaluation.advantages.length > 0) {
+        advantagesContentEl.innerHTML = '';
+        evaluation.advantages.forEach(advantage => {
+            const p = document.createElement('p');
+            p.textContent = '✅ ' + advantage;
+            advantagesContentEl.appendChild(p);
+        });
+    }
+    
+    // 단점 업데이트
+    const disadvantagesContentEl = document.getElementById('disadvantagesContent');
+    if (disadvantagesContentEl && evaluation.disadvantages.length > 0) {
+        disadvantagesContentEl.innerHTML = '';
+        evaluation.disadvantages.forEach(disadvantage => {
+            const p = document.createElement('p');
+            p.textContent = '💡 ' + disadvantage;
+            disadvantagesContentEl.appendChild(p);
+        });
+    }
+    
+    console.log('보고서 UI 업데이트 완료');
+}
