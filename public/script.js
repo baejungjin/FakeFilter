@@ -18,7 +18,7 @@ window.onload = function() {
             internetPop.classList.add('show');
             console.log('팝업이 열렸어야 함');
         };
-        console.log('인터넷 버튼 연결됨');
+        console.log('🌐 인터넷 버튼 연결 완료!');
     } else {
         console.log('인터넷 버튼 또는 팝업을 찾을 수 없음');
     }
@@ -169,7 +169,7 @@ window.onload = function() {
                 }, 1000);
             }
         };
-        console.log('전송 버튼 연결됨');
+        console.log('📤 전송 버튼 연결 완료!');
     }
     
     // 엔터키로 전송
@@ -218,7 +218,7 @@ window.onload = function() {
                 console.log('사용자가 제출을 취소함');
             }
         };
-        console.log('제출 버튼 연결됨');
+        console.log('📋 제출 버튼 연결 완료!');
     } else {
         console.log('제출 버튼 또는 보고서 팝업을 찾을 수 없음');
     }

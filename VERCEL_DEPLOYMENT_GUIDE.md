@@ -67,7 +67,7 @@ vercel dev       # 로컬 서버 실행
 - **배포 후**: `https://your-domain.vercel.app/api/chat/seokdae`
 - **로컬**: `http://localhost:3000/api/chat/seokdae`
 
-## 📞 문제 해결
+## 🔧 문제 해결
 1. **401 에러**: OpenAI API 키 확인
 2. **503 에러**: 함수 타임아웃 또는 Vercel 설정 확인
 3. **CORS 에러**: 이미 헤더 설정되어 있음
