@@ -197,7 +197,7 @@ module.exports = async function handler(req, res) {
         const { character } = req.query;
         const { message, history = [] } = req.body;
 
-        console.log(`[${new Date().toISOString()}] ${character} 캐릭터로 요청 받음:`, message);
+        console.log(`🎯 [${new Date().toISOString()}] ${character} 캐릭터로 요청 받음:`, message);
 
         // 유효성 검사
         if (!message || message.trim() === '') {

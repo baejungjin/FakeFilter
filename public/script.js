@@ -3,7 +3,7 @@
 let conversationHistory = [];
 
 window.onload = function() {
-    console.log('페이지 완전 로드됨');
+    console.log('🚀 페이지 완전 로드됨!');
     
     // 인터넷 버튼
     const internetBtn = document.getElementById('internetButton');
@@ -542,7 +542,7 @@ window.onload = function() {
         };
     }
     
-    console.log('==== 모든 기능 연결 완료 ====');
+    console.log('🎉 모든 기능 연결 완료! ✨');
     console.log('internetButton:', !!internetBtn);
     console.log('internetPopup:', !!internetPop);
     console.log('submitButton:', !!submitBtn);
