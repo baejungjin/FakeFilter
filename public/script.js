@@ -203,6 +203,21 @@ window.onload = function() {
             if (confirm('석대와의 대화를 제출하시겠습니까?\n\n학습 완료 보고서가 생성됩니다.')) {
                 console.log('사용자가 제출을 확인함');
                 
+                // 먼저 사용자 메시지로 "보고서제출" 채팅 추가
+                const userDiv = document.createElement('div');
+                userDiv.className = 'message user-message';
+                userDiv.innerHTML = `
+                    <div class="profile-image">👤</div>
+                    <div class="message-container">
+                        <div class="message-content">
+                            <div class="user-label">나</div>
+                            <div>보고서제출</div>
+                        </div>
+                    </div>
+                `;
+                chatMsg.appendChild(userDiv);
+                chatMsg.scrollTop = chatMsg.scrollHeight;
+
                 // API로 "보고서제출" 메시지 전송
                 setTimeout(async function() {
                     try {
@@ -232,23 +247,60 @@ window.onload = function() {
                         console.log('보고서제출 API 응답:', data);
                         
                         if (data.response) {
+                            // 석대의 평가 응답을 채팅에 추가
+                            const botDiv = document.createElement('div');
+                            botDiv.className = 'message bot-message';
+                            botDiv.innerHTML = `
+                                <div class="profile-image" style="background-image: url('https://i.imgur.com/tRcnjyX.png'); background-size: cover; background-position: center;"></div>
+                                <div class="message-container">
+                                    <div class="message-content">
+                                        <div class="user-label">석대</div>
+                                        <div style="white-space: pre-line;">${data.response}</div>
+                                    </div>
+                                </div>
+                            `;
+                            chatMsg.appendChild(botDiv);
+                            chatMsg.scrollTop = chatMsg.scrollHeight;
+                            
+                            // 대화 기록에 추가
+                            conversationHistory.push(
+                                { role: "user", content: "보고서제출" },
+                                { role: "assistant", content: data.response }
+                            );
+
                             // API 응답에서 평가 정보 파싱
                             const evaluation = parseEvaluationResponse(data.response);
                             
                             // 보고서 UI 업데이트
-                            updateReportUI(evaluation, messages.length);
+                            updateReportUI(evaluation, messages.length + 1); // +1 for the "보고서제출" message
                         }
                         
                     } catch (error) {
                         console.error('보고서제출 API 오류:', error);
+                        
+                        // 에러 응답도 채팅에 추가
+                        const botDiv = document.createElement('div');
+                        botDiv.className = 'message bot-message';
+                        botDiv.innerHTML = `
+                            <div class="profile-image" style="background-image: url('https://i.imgur.com/tRcnjyX.png'); background-size: cover; background-position: center;"></div>
+                            <div class="message-container">
+                                <div class="message-content">
+                                    <div class="user-label">석대</div>
+                                    <div>아 잠깐, 시스템이 좀 이상한 것 같은데... 다시 한 번 시도해볼까? ㅋㅋ</div>
+                                </div>
+                            </div>
+                        `;
+                        chatMsg.appendChild(botDiv);
+                        chatMsg.scrollTop = chatMsg.scrollHeight;
+                        
                         // 기본 보고서 표시
                         updateReportUI({ 
                             result: '평가 중 오류 발생', 
                             advantages: ['다시 시도해주세요'], 
                             disadvantages: ['서버 연결을 확인해주세요'] 
-                        }, messages.length);
+                        }, messages.length + 1);
                     }
-                }, 500);
+                }, 1000);
                 
                 // 보고서 팝업 표시
                 reportPop.style.display = 'flex';
