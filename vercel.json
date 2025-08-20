@@ -1,1 +1,18 @@
-{"functions": {"api/chat/[character].js": {"maxDuration": 30}},"env": {"OPENAI_API_KEY": "@openai_api_key"},"build": {"env": {"OPENAI_API_KEY": "@openai_api_key"}}}
+{
+  "name": "fake-filter-vercel",
+  "version": 2,
+  "functions": {
+    "api/chat/[character].js": {
+      "maxDuration": 30
+    }
+  },
+  "github": {
+    "autoDeployments": true,
+    "enabled": true
+  },
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  }
+}
