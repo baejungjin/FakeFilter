@@ -1,7 +1,7 @@
 {
   "name": "fake-filter-vercel",
   "version": "1.0.0",
-  "description": "페이크 필터 교육 게임 - Vercel 서버리스 배포용",
+  "description": "🎮 페이크 필터 교육 게임 - Vercel 서버리스 배포용 ✨",
   "scripts": {
     "dev": "vercel dev",
     "build": "echo 'No build step required'",
@@ -14,7 +14,7 @@
     "vercel": "^32.5.0"
   },
   "keywords": ["fake-news", "education", "ai", "chatbot", "vercel"],
-  "author": "FakeFilter Team",
+  "author": "🚀 FakeFilter Team",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"

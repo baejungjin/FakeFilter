@@ -1,7 +1,7 @@
 const OpenAI = require('openai');
 
 // ================================
-// 🎭 캐릭터별 AI 프롬프트 설정
+// 🎭 캐릭터별 AI 프롬프트 설정 ✨
 // ================================
 
 const CHARACTER_PROMPTS = {
@@ -101,7 +101,7 @@ const CHARACTER_PROMPTS = {
 };
 
 // ================================
-// 🤖 OpenAI API 설정 및 호출 함수
+// 🤖 OpenAI API 설정 및 호출 함수 🚀
 // ================================
 
 const openai = new OpenAI({

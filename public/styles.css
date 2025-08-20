@@ -4,9 +4,9 @@
     box-sizing: border-box;
 }
 
-/* 폰트는 HTML에서 preconnect로 로딩됩니다 */
+/* 🎨 폰트는 HTML에서 preconnect로 로딩됩니다 */
 
-/* 픽셀 폰트 fallback 스타일 */
+/* ✨ 픽셀 폰트 fallback 스타일 */
 @font-face {
     font-family: 'PixelFallback';
     src: local('Courier New'), local('Monaco'), local('Consolas');
