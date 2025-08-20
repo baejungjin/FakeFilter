@@ -1,1187 +1,461 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const messageInput = document.getElementById('messageInput');
-    const sendButton = document.getElementById('sendButton');
-    const internetButton = document.getElementById('internetButton');
-    const chatMessages = document.getElementById('chatMessages');
-    const internetPopup = document.getElementById('internetPopup');
-    const closePopup = document.getElementById('closePopup');
+// 가장 간단한 방식으로 다시 시작
+window.onload = function() {
+    console.log('페이지 완전 로드됨');
     
-    // 탭 관련 요소들
+    // 인터넷 버튼
+    const internetBtn = document.getElementById('internetButton');
+    const internetPop = document.getElementById('internetPopup');
+    
+    if (internetBtn && internetPop) {
+        internetBtn.onclick = function() {
+            console.log('인터넷 버튼 클릭됨!');
+            internetPop.style.display = 'flex';
+            internetPop.style.visibility = 'visible';
+            internetPop.style.opacity = '1';
+            internetPop.classList.add('show');
+            console.log('팝업이 열렸어야 함');
+        };
+        console.log('인터넷 버튼 연결됨');
+    } else {
+        console.log('인터넷 버튼 또는 팝업을 찾을 수 없음');
+    }
+    
+    // 닫기 버튼
+    const closeBtn = document.getElementById('closePopup');
+    if (closeBtn && internetPop) {
+        closeBtn.onclick = function() {
+            console.log('닫기 클릭됨');
+            internetPop.style.display = 'none';
+            internetPop.classList.remove('show');
+        };
+        console.log('닫기 버튼 연결됨');
+    }
+    
+    // 전송 버튼
+    const sendBtn = document.getElementById('sendButton');
+    const msgInput = document.getElementById('messageInput');
+    const chatMsg = document.getElementById('chatMessages');
+    
+    if (sendBtn) {
+        sendBtn.onclick = function() {
+            console.log('전송 버튼 클릭됨');
+            if (msgInput && chatMsg && msgInput.value.trim()) {
+                const msg = msgInput.value.trim();
+                console.log('메시지:', msg);
+                
+                // 사용자 메시지 추가
+                const userDiv = document.createElement('div');
+                userDiv.className = 'message user-message';
+                userDiv.innerHTML = `
+                    <div class="profile-image">👤</div>
+                    <div class="message-container">
+                        <div class="message-content">
+                            <div class="user-label">나</div>
+                            <div>${msg}</div>
+                        </div>
+                    </div>
+                `;
+                chatMsg.appendChild(userDiv);
+                msgInput.value = '';
+                
+                // 스크롤 맨 아래로
+                chatMsg.scrollTop = chatMsg.scrollHeight;
+                
+                // 봇 응답 (간단히)
+                setTimeout(function() {
+                    const botDiv = document.createElement('div');
+                    botDiv.className = 'message bot-message';
+                    botDiv.innerHTML = `
+                        <div class="profile-image" style="background-image: url('https://i.imgur.com/tRcnjyX.png'); background-size: cover; background-position: center;"></div>
+                        <div class="message-container">
+                            <div class="message-content">
+                                <div class="user-label">석대</div>
+                                <div>네, 말씀하신 내용에 대해 생각해보겠습니다.</div>
+                            </div>
+                        </div>
+                    `;
+                    chatMsg.appendChild(botDiv);
+                    chatMsg.scrollTop = chatMsg.scrollHeight;
+                }, 1000);
+            }
+        };
+        console.log('전송 버튼 연결됨');
+    }
+    
+    // 엔터키로 전송
+    if (msgInput) {
+        msgInput.onkeydown = function(e) {
+            if (e.key === 'Enter') {
+                console.log('엔터키 눌림');
+                e.preventDefault();
+                if (sendBtn) sendBtn.click();
+            }
+        };
+        console.log('엔터키 이벤트 연결됨');
+    }
+    
+    // 제출 버튼
+    const submitBtn = document.getElementById('submitButton');
+    const reportPop = document.getElementById('reportPopup');
+    
+    if (submitBtn && reportPop) {
+        submitBtn.onclick = function() {
+            console.log('제출 버튼 클릭됨!');
+            
+            // 대화 수 확인
+            const messages = chatMsg ? chatMsg.querySelectorAll('.user-message') : [];
+            if (messages.length < 1) {
+                alert('석대와 대화를 나눈 후 제출해주세요!');
+                return;
+            }
+            
+            // 확인 대화상자
+            if (confirm('석대와의 대화를 제출하시겠습니까?\n\n학습 완료 보고서가 생성됩니다.')) {
+                console.log('사용자가 제출을 확인함');
+                
+                // 메시지 개수 업데이트
+                const messageCount = document.getElementById('messageCount');
+                if (messageCount) {
+                    messageCount.textContent = messages.length;
+                }
+                
+                reportPop.style.display = 'flex';
+                reportPop.style.visibility = 'visible';
+                reportPop.style.opacity = '1';
+                reportPop.classList.add('show');
+                console.log('보고서 팝업이 열렸어야 함');
+            } else {
+                console.log('사용자가 제출을 취소함');
+            }
+        };
+        console.log('제출 버튼 연결됨');
+    } else {
+        console.log('제출 버튼 또는 보고서 팝업을 찾을 수 없음');
+    }
+    
+    // 보고서 닫기
+    const closeReportBtn = document.getElementById('closeReportPopup');
+    const reportCloseBtn = document.getElementById('reportCloseButton');
+    
+    if (closeReportBtn && reportPop) {
+        closeReportBtn.onclick = function() {
+            reportPop.style.display = 'none';
+            reportPop.classList.remove('show');
+        };
+    }
+    if (reportCloseBtn && reportPop) {
+        reportCloseBtn.onclick = function() {
+            reportPop.style.display = 'none';
+            reportPop.classList.remove('show');
+        };
+    }
+    
+    // 탭 전환
     const articleTab = document.getElementById('articleTab');
     const communityTab = document.getElementById('communityTab');
-    const acquaintanceTab = document.getElementById('acquaintanceTab');
     const articleContent = document.getElementById('articleContent');
     const communityContent = document.getElementById('communityContent');
-    const acquaintanceContent = document.getElementById('acquaintanceContent');
     
-    // 홈 버튼 요소
-    const homeButton = document.getElementById('homeButton');
-    const gameplayButton = document.getElementById('gameplayButton');
-    
-    // 제출하기 버튼 요소
-    const submitButton = document.getElementById('submitButton');
-    
-    // 보고서 팝업 요소들
-    const reportPopup = document.getElementById('reportPopup');
-    const closeReportPopup = document.getElementById('closeReportPopup');
-    const reportCloseButton = document.getElementById('reportCloseButton');
-    const nextStageButton = document.getElementById('nextStageButton');
-    
-    // 디버깅: 요소들이 제대로 선택되었는지 확인
-    console.log('Internet popup elements:', {
-        internetButton: !!internetButton,
-        internetPopup: !!internetPopup,
-        closePopup: !!closePopup,
-        messageInput: !!messageInput,
-        sendButton: !!sendButton
-    });
-    
-    console.log('Report popup elements:', {
-        submitButton: !!submitButton,
-        reportPopup: !!reportPopup,
-        homeButton: !!homeButton,
-        gameplayButton: !!gameplayButton
-    });
-
-    function addMessage(content, isUser = false) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-        
-        // 프로필 이미지
-        const profileImage = document.createElement('div');
-        profileImage.className = 'profile-image';
-        if (isUser) {
-            profileImage.textContent = '👤';
-        }
-        
-        // 메시지 컨테이너
-        const messageContainer = document.createElement('div');
-        messageContainer.className = 'message-container';
-        
-        // 메시지 내용
-        const messageContent = document.createElement('div');
-        messageContent.className = 'message-content';
-        
-        // 사용자 라벨 (메시지 내용 안에)
-        const userLabel = document.createElement('div');
-        userLabel.className = 'user-label';
-        
-        // 석대 페이지인지 확인
-        const isSeokdaePage = document.body.hasAttribute('data-character') && 
-                             document.body.getAttribute('data-character') === 'seokdae';
-        
-        userLabel.textContent = isUser ? '나' : (isSeokdaePage ? '석대' : '민지');
-        
-        // 실제 메시지 텍스트
-        const messageText = document.createElement('div');
-        messageText.textContent = content;
-        
-        messageContent.appendChild(userLabel);
-        messageContent.appendChild(messageText);
-        messageContainer.appendChild(messageContent);
-        messageDiv.appendChild(profileImage);
-        messageDiv.appendChild(messageContainer);
-        chatMessages.appendChild(messageDiv);
-        
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+    if (articleTab) {
+        articleTab.onclick = function() {
+            console.log('기사 탭 클릭됨');
+            articleTab.classList.add('active');
+            if (communityTab) communityTab.classList.remove('active');
+            if (articleContent) articleContent.classList.add('active');
+            if (communityContent) communityContent.classList.remove('active');
+        };
+        console.log('기사 탭 연결됨');
     }
-
-    // ================================
-    // 🔄 백엔드 API와 통신하는 함수
-    // ================================
     
-    // 대화 기록 저장용 배열
-    let conversationHistory = [];
+    if (communityTab) {
+        communityTab.onclick = function() {
+            console.log('커뮤니티 탭 클릭됨');
+            communityTab.classList.add('active');
+            if (articleTab) articleTab.classList.remove('active');
+            if (communityContent) communityContent.classList.add('active');
+            if (articleContent) articleContent.classList.remove('active');
+        };
+        console.log('커뮤니티 탭 연결됨');
+    }
     
-    async function getBotResponse(userMessage) {
-        // 석대 페이지인지 확인하여 캐릭터 결정
-        const isSeokdaePage = document.body.hasAttribute('data-character') && 
-                             document.body.getAttribute('data-character') === 'seokdae';
+    // 기사 상세 내용 데이터
+    const articleDetails = {
+        '올해 지구 평균기온, 1850년 이후 최고치 기록': {
+            content: '세계기상기구(WMO)는 2024년 지구 평균기온이 산업화 이전 대비 1.45℃ 높아졌다고 공식 발표했다. 이는 1850년 기상 관측이 시작된 이후 가장 높은 수치다. 보고서에 따르면 유럽과 아시아는 지난 20년간 폭염 발생 빈도가 거의 두 배 가까이 늘었으며, 북극의 해빙 면적은 9월 기준 역사상 최저 수준을 기록했다.\n\n기후학자들은 이러한 현상이 단순한 계절적 변동이 아니라 장기적인 추세임을 강조한다. 특히, 해양의 표면 온도가 높아지면서 해양 생태계에도 큰 충격이 가해지고 있으며, 산호 백화 현상과 어류 개체 수 변화가 뚜렷하게 관측되고 있다. WMO는 "기후변화는 더 이상 미래의 가능성이 아닌 현재 진행 중인 사실이며, 이는 명백히 인류 활동에 따른 결과"라고 결론지었다.',
+            source: '🌍 월드뉴스 네트워크',
+            date: '2024.12'
+        },
+        '국내 태풍 피해액 10년간 2배 증가… 기후변화 영향 뚜렷': {
+            content: '한국재난안전연구원의 분석에 따르면, 최근 10년간 태풍으로 인한 국내 평균 연간 피해액은 2조 원을 넘어섰다. 이는 2000년대 초반과 비교했을 때 두 배 이상 증가한 수치다. 연구진은 해수면 온도가 상승하면서 태풍의 세력이 더욱 강력해지고, 발생 빈도와 이동 경로가 불규칙해졌다고 설명했다.\n\n실제로 2023년과 2024년 연이어 한반도를 강타한 태풍들은 풍속과 강수량 모두 기존 평균치를 크게 웃돌았다. 이에 따라 농작물 피해, 주택 침수, 교통 인프라 마비가 전국적으로 발생하며 사회적 비용이 막대하게 증가했다. 전문가들은 "앞으로 30년 안에 현재보다 최대 3배 이상의 피해가 발생할 가능성이 있다"고 경고한다. 정부는 이에 대응하기 위해 방재 인프라 확충과 함께, 기후적응형 도시 설계를 단계적으로 추진하고 있다.',
+            source: '📺 KBN 뉴스',
+            date: '2024.09'
+        },
+        '한겨울 폭설 속, 시민들 \'기후변화 실감 어렵다\'는 목소리도': {
+            content: '올겨울 미국과 한국은 기록적인 폭설을 경험했다. 서울 일부 지역은 20년 만에 최대 적설량을 기록했고, 미국 동부에서는 항공편이 대규모로 마비됐다. 시민들은 "이렇게 추운데 무슨 지구온난화냐"며 고개를 갸웃하고 있다. 난방비 폭등에 시달린 주민들은 "뉴스에서는 지구가 뜨거워진다는데, 현실은 그 반대"라고 토로한다.\n\n물론 과학자들은 여전히 지구 평균기온이 오르고 있다고 주장하지만, 눈앞의 현실과는 괴리가 있다는 지적이 나온다. "내가 사는 곳은 오히려 더 춥다"는 시민들의 경험담은 단순히 무시하기 어렵다는 것이다. 기후 위기가 과연 언론과 학계가 말하는 만큼 체감할 만한 문제인지, 여전히 의문을 품는 사람들이 적지 않다.',
+            source: '📰 코리아 이코노믹 리뷰',
+            date: '2024.01'
+        },
+        '세계적 석학도 경고… \'온난화 공포, 과장됐다\'': {
+            content: '미국의 저명한 기후학자가 최근 방송 인터뷰에서 "기후변화가 전혀 없는 것은 아니지만, 대중에게 알려진 만큼 위협적이지 않다"고 주장했다. 그는 "기후 위기는 정치적 도구로 활용되는 경우가 많으며, 탄소세 확대와 같은 정책을 정당화하기 위한 수단으로 과장되고 있다"고 지적했다.\n\n이 발언은 여러 언론과 방송에서 연이어 인용되며 큰 반향을 불러일으켰다. 일부 시민들은 "전문가도 그렇게 말한다면, 지금의 기후 위기 담론은 과장된 것이 아니냐"고 반문한다. 실제로 온라인 커뮤니티에서는 "정부가 세금을 더 걷기 위해 위기를 부풀린다"는 주장도 확산되고 있다. 반면 다른 학자들은 즉각 반박했지만, 일반 대중에게는 \'권위 있는 인물의 발언\'이 더 설득력 있게 다가가고 있다.',
+            source: '📰 글로벌 타임즈 데일리',
+            date: '2024.05'
+        },
+        '北극곰 개체 수 감소세… 먹이 부족과 해빙 축소 탓': {
+            content: '국제자연보전연맹(IUCN)은 최근 보고서에서 북극곰을 \'취약종\'으로 다시 한 번 분류하며 경고음을 울렸다. 1980년대 약 2만 6천 마리에 달했던 북극곰의 개체 수는 현재 2만 마리 이하로 감소한 것으로 추정된다. 가장 큰 원인은 해빙 면적의 급격한 축소다. 사냥할 수 있는 기간이 짧아지면서 물범과 같은 주요 먹이를 확보하기가 점점 어려워지고 있다.\n\n연구진은 일부 지역에서 개체 수가 일시적으로 증가한 사례가 있지만, 이는 장기적인 감소세와 무관하며 오히려 인간 활동에 따른 지역적 영향으로 해석된다고 설명했다. 북극곰의 영양 상태는 갈수록 악화되고 있으며, 새끼의 생존율도 낮아지고 있다. 보고서는 "북극곰은 단순히 한 종의 문제가 아니라, 북극 생태계 전반의 건강을 보여주는 지표종"이라며 국제적 협력을 촉구했다.',
+            source: '🐾 내셔널 와일드그래픽',
+            date: '2023.07'
+        }
+    };
+
+    // 기사 클릭 이벤트 함수
+    function setupArticleClicks() {
+        const items = document.querySelectorAll('.content-item');
+        const articleModal = document.getElementById('articleDetailModal');
         
-        const character = isSeokdaePage ? 'seokdae' : 'minji';
+        console.log('기사 클릭 이벤트 설정 중... 아이템 수:', items.length);
         
-        try {
-            // 백엔드 서버의 챗봇 API 호출
-            const response = await fetch(`/api/chat/${character}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: userMessage,
-                    history: conversationHistory.slice(-10) // 최근 10개 대화만 전송
-                })
-            });
-
-            const data = await response.json();
-
-            // 민지 캐릭터 업데이트 상태 체크
-            if (!response.ok && data.updateStatus && character === 'minji') {
-                alert('⚠️ 업데이트 예정!\n\n민지와의 대화는 현재 업데이트 중입니다.\n잠시 후 다시 시도해주세요!');
-                return "죄송해요, 지금 업데이트 중이에요... 잠시 후 다시 시도해 주세요!";
-            }
-
-            if (!response.ok) {
-                throw new Error(`서버 오류: ${response.status}`);
-            }
+        items.forEach(function(item) {
+            // 기존 이벤트 제거
+            item.onclick = null;
             
-            // 대화 기록에 추가
-            conversationHistory.push(
-                { role: "user", content: userMessage },
-                { role: "assistant", content: data.response }
-            );
-            
-            return data.response;
-
-        } catch (error) {
-            console.error('백엔드 API 통신 오류:', error);
-            
-            // 폴백 응답 (서버 연결 실패 시)
-            const fallbackResponses = {
-                minji: [
-                    "죄송해요, 지금 서버와 연결이 안 되네요... 잠시 후 다시 시도해 주세요!",
-                    "앗, 시스템에 문제가 있는 것 같아요. 조금 있다가 다시 말걸어 주세요!",
-                    "서버 연결이 불안정해요. 잠깐 기다려 주시겠어요?"
-                ],
-                seokdae: [
-                    "흠... 지금 시스템에 문제가 있는 것 같네요. 잠시 후 다시 이야기해 봅시다.",
-                    "서버 연결이 원활하지 않군요. 조금 기다려 주세요.",
-                    "기술적인 문제가 있는 것 같습니다. 곧 해결될 거예요."
-                ]
+            // 새 이벤트 추가
+            item.onclick = function() {
+                console.log('기사 클릭됨:', item.textContent);
+                
+                if (articleModal) {
+                    const title = document.getElementById('articleTitle');
+                    const body = document.getElementById('articleBody');
+                    const source = document.getElementById('articleSource');
+                    const date = document.getElementById('articleDate');
+                    
+                    const articleData = articleDetails[item.textContent];
+                    
+                    if (title) title.textContent = item.textContent;
+                    if (body) {
+                        if (articleData) {
+                            body.textContent = articleData.content;
+                        } else {
+                            body.textContent = item.textContent + '에 대한 상세 내용입니다. 이 기사의 신뢰성을 비판적으로 검토해보세요. 정보의 출처와 근거를 확인하고, 편향된 표현이나 과장된 내용이 있는지 살펴보는 것이 중요합니다.';
+                        }
+                    }
+                    if (source) {
+                        if (articleData) {
+                            source.textContent = articleData.source;
+                        } else {
+                            source.textContent = '뉴스소스';
+                        }
+                    }
+                    if (date) {
+                        if (articleData) {
+                            date.textContent = articleData.date;
+                        } else {
+                            date.textContent = '2024.01.15';
+                        }
+                    }
+                    
+                    articleModal.style.display = 'flex';
+                    articleModal.style.visibility = 'visible';
+                    articleModal.style.opacity = '1';
+                    articleModal.classList.add('show');
+                    
+                    console.log('기사 상세보기 모달 열림');
+                } else {
+                    console.log('articleModal을 찾을 수 없음');
+                }
             };
             
-            const responses = fallbackResponses[character];
-            return responses[Math.floor(Math.random() * responses.length)];
-        }
-    }
-
-    function sendMessage() {
-        const message = messageInput.value.trim();
-        
-        if (message === '') return;
-        
-        addMessage(message, true);
-        messageInput.value = '';
-        
-        // 로딩 메시지 표시
-        setTimeout(async () => {
-            const botResponse = await getBotResponse(message);
-            addMessage(botResponse, false);
-        }, 500 + Math.random() * 1000);
-    }
-
-    sendButton.addEventListener('click', sendMessage);
-    
-    // 인터넷 버튼 이벤트 리스너
-    if (internetButton && internetPopup) {
-        console.log('Adding internet button event listener');
-        
-        // 테스트를 위해 버튼에 직접 스타일 추가
-        internetButton.style.zIndex = '9999';
-        internetButton.style.pointerEvents = 'auto';
-        internetButton.style.position = 'relative';
-        
-        internetButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Internet button clicked!');
-            console.log('internetPopup element:', internetPopup);
-            console.log('Current popup display:', internetPopup.style.display);
-            
-            internetPopup.style.display = 'flex';
-            internetPopup.style.zIndex = '10000';
-            
-            setTimeout(() => {
-                internetPopup.classList.add('show');
-                console.log('Popup should now be visible');
-            }, 10);
+            // 마우스 커서 변경
+            item.style.cursor = 'pointer';
+            item.style.userSelect = 'none';
         });
         
-        // 추가: 마우스 오버 테스트
-        internetButton.addEventListener('mouseover', function() {
-            console.log('Mouse over internet button');
-        });
-        
-    } else {
-        console.error('Internet button or popup elements not found:', {
-            internetButton: internetButton,
-            internetPopup: internetPopup
-        });
+        console.log('기사 클릭 이벤트 ' + items.length + '개 연결됨');
     }
     
-    function closeInternetPopup() {
-        if (internetPopup) {
-            internetPopup.classList.remove('show');
-            setTimeout(() => {
-                internetPopup.style.display = 'none';
-            }, 400);
-        }
-    }
+    // 초기 연결
+    setupArticleClicks();
     
-    if (closePopup) {
-        closePopup.addEventListener('click', closeInternetPopup);
-    }
+    // 모달 닫기
+    const articleModal = document.getElementById('articleDetailModal');
+    const closeModal = document.getElementById('closeArticleModal');
     
-    if (internetPopup) {
-        internetPopup.addEventListener('click', function(e) {
-            if (e.target === internetPopup) {
-                closeInternetPopup();
-            }
-        });
-    }
-    
-    
-    // 엔터 키로 메시지 전송 및 I키로 인터넷 팝업 열기
-    messageInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-    
-    // 키보드 단축키로 인터넷 팝업 열기 (I 키)
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'i' || e.key === 'I') {
-            if (internetPopup && internetButton) {
-                console.log('I key pressed - opening internet popup');
-                internetPopup.style.display = 'flex';
-                internetPopup.style.zIndex = '10000';
-                setTimeout(() => {
-                    internetPopup.classList.add('show');
-                }, 10);
-            }
-        }
-    });
-
-    messageInput.addEventListener('input', function() {
-        sendButton.style.opacity = this.value.trim() ? '1' : '0.7';
-    });
-
-    // 탭 전환 함수
-    function switchTab(activeTab, activeContent) {
-        // 모든 탭 버튼에서 active 클래스 제거
-        document.querySelectorAll('.tab-button').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        
-        // 모든 컨텐츠 영역에서 active 클래스 제거
-        document.querySelectorAll('.content-area').forEach(content => {
-            content.classList.remove('active');
-        });
-        
-        // 선택된 탭과 컨텐츠에 active 클래스 추가
-        activeTab.classList.add('active');
-        activeContent.classList.add('active');
-    }
-    
-    // 탭 버튼 이벤트 리스너
-    articleTab.addEventListener('click', function() {
-        switchTab(articleTab, articleContent);
-    });
-    
-    communityTab.addEventListener('click', function() {
-        switchTab(communityTab, communityContent);
-    });
-    
-    acquaintanceTab.addEventListener('click', function() {
-        switchTab(acquaintanceTab, acquaintanceContent);
-    });
-
-    // 홈 버튼 클릭 이벤트
-    if (homeButton) {
-        homeButton.addEventListener('click', function() {
-            window.location.href = 'index.html';
-        });
-    }
-
-    // 게임플레이 버튼 클릭 이벤트
-    if (gameplayButton) {
-        gameplayButton.addEventListener('click', function() {
-            window.location.href = 'gameplay.html';
-        });
-    }
-
-    // AI 평가 결과를 보고서에 반영하는 함수
-    function updateReportWithEvaluation(aiResponse) {
-        console.log('AI 평가 파싱 중:', aiResponse);
-        
-        // 석대 페이지인지 확인
-        const isSeokdaePage = document.body.hasAttribute('data-character') && 
-                             document.body.getAttribute('data-character') === 'seokdae';
-        
-        // 다양한 패턴으로 파싱 시도
-        let resultMatch = aiResponse.match(/결과\s*:\s*설득률\s*(\d+)%/) || aiResponse.match(/설득률\s*(\d+)%/);
-        let advantageMatch = aiResponse.match(/장점\s*:\s*([\s\S]*?)(?=단점\s*:|개선|$)/);
-        let disadvantageMatch = aiResponse.match(/(?:단점|개선.*?부분)\s*:\s*([\s\S]*?)$/);
-        
-        // 대안 패턴들 (퍼센트 기반)
-        if (!resultMatch) {
-            resultMatch = aiResponse.match(/(\d+)%/) || 
-                         aiResponse.match(/설득.*?(\d+)/) ||
-                         aiResponse.match(/성공.*?(\d+)/);
-        }
-        
-        if (!advantageMatch) {
-            advantageMatch = aiResponse.match(/(?:좋은.*?점|성공.*?요인|잘한.*?점)\s*[:\-]?\s*([\s\S]*?)(?=(?:부족|개선|단점|아쉬운)|$)/) ||
-                           aiResponse.match(/(?:•|-)\s*([^\n]*(?:좋|성공|효과|설득)[^\n]*)/);
-        }
-        
-        if (!disadvantageMatch) {
-            disadvantageMatch = aiResponse.match(/(?:부족|개선|단점|아쉬운).*?[:\-]?\s*([\s\S]*?)$/) ||
-                              aiResponse.match(/(?:•|-)\s*([^\n]*(?:부족|개선|보완|아쉬운)[^\n]*)/);
-        }
-        
-        // 설득 결과 업데이트 (퍼센트 기반)
-        if (resultMatch) {
-            const percentage = parseInt(resultMatch[1]);
-            updatePersuasionResult(percentage);
-        } else {
-            // 기본값으로 25% 설정
-            updatePersuasionResult(25);
-        }
-        
-        // 장점 업데이트
-        if (advantageMatch) {
-            let advantages = advantageMatch[1].trim().split(/[\n•-]/).filter(line => line.trim() && line.length > 3);
-            if (advantages.length === 0) {
-                advantages = ['논리적인 접근을 시도했습니다', '상대방의 입장을 이해하려고 노력했습니다'];
-            }
-            updateReportSection('advantages', advantages);
-        } else {
-            // 대화 수 확인 (3회 이하 시 특별 메시지)
-            const userMessages = chatMessages.querySelectorAll('.user-message');
-            const actualMessageCount = Math.max(0, userMessages.length - 1); // "보고서 제출" 메시지 제외
-            
-            if (isSeokdaePage && actualMessageCount <= 3) {
-                updateReportSection('advantages', ['좀 더 노력해 보세요!']);
-            } else {
-                // 기본 장점 제공
-                const defaultAdvantages = isSeokdaePage ? 
-                    ['복합적 편향에 대한 이해를 보여주었습니다', '논리적 근거를 제시하려고 노력했습니다'] :
-                    ['공감적 소통을 시도했습니다', '신뢰할 수 있는 정보를 제공하려고 했습니다'];
-                updateReportSection('advantages', defaultAdvantages);
-            }
-        }
-        
-        // 단점 업데이트
-        if (disadvantageMatch) {
-            let disadvantages = disadvantageMatch[1].trim().split(/[\n•-]/).filter(line => line.trim() && line.length > 3);
-            if (disadvantages.length === 0) {
-                disadvantages = ['더 체계적인 접근이 필요합니다', '상대방의 핵심 편향을 정확히 파악하는 것이 중요합니다'];
-            }
-            updateReportSection('disadvantages', disadvantages);
-        } else {
-            // 기본 개선점 제공
-            const defaultDisadvantages = isSeokdaePage ? 
-                ['각 편향을 단계별로 접근하는 전략이 필요합니다', '감정적 공감대 형성을 먼저 시도해보세요'] :
-                ['과학적 근거와 개인 경험의 균형을 맞춰보세요', '단계적 설득보다는 공감대 형성을 우선해보세요'];
-            updateReportSection('disadvantages', defaultDisadvantages);
-        }
-        
-        // 석대 페이지인 경우 편향 정보 추가
-        if (isSeokdaePage) {
-            updateSeokdaeBiasInfo();
-        }
-    }
-    
-    // 설득 결과 표시 함수 (퍼센트 기반)
-    function updatePersuasionResult(percentage) {
-        const persuasionElement = document.getElementById('persuasionResult');
-        const resultTextElement = document.getElementById('resultText');
-        
-        if (persuasionElement && resultTextElement) {
-            // 기존 클래스 제거
-            persuasionElement.classList.remove('success', 'failure', 'evaluating', 'partial');
-            
-            // 퍼센트에 따른 스타일 적용
-            if (percentage >= 75) {
-                persuasionElement.classList.add('success');
-                resultTextElement.textContent = `설득 성공! ${percentage}%`;
-            } else if (percentage >= 50) {
-                persuasionElement.classList.add('partial');
-                resultTextElement.textContent = `부분 성공 ${percentage}%`;
-            } else if (percentage >= 25) {
-                persuasionElement.classList.add('partial');
-                resultTextElement.textContent = `설득률 ${percentage}%`;
-            } else if (percentage >= 0) {
-                persuasionElement.classList.add('failure');
-                resultTextElement.textContent = `설득률 ${percentage}%`;
-            } else {
-                persuasionElement.classList.add('evaluating');
-                resultTextElement.textContent = '평가 중...';
-            }
-            
-            console.log('설득 결과 업데이트:', percentage + '%');
-        } else {
-            console.error('설득 결과 표시 요소를 찾을 수 없습니다');
-        }
-    }
-    
-    // 보고서 섹션 업데이트 함수
-    function updateReportSection(sectionType, items) {
-        const isAdvantage = sectionType === 'advantages';
-        const targetId = isAdvantage ? 'advantagesContent' : 'disadvantagesContent';
-        
-        const targetElement = document.getElementById(targetId);
-        if (targetElement) {
-            targetElement.innerHTML = items.map(item => 
-                `<p>• ${item.replace(/^[•\-]\s*/, '').trim()}</p>`
-            ).join('');
-            console.log(`${isAdvantage ? '장점' : '단점'} 섹션 업데이트 완료:`, items);
-        } else {
-            console.error(`${targetId} 요소를 찾을 수 없습니다`);
-        }
-    }
-    
-    // 석대의 편향 정보를 업데이트하는 함수
-    function updateSeokdaeBiasInfo() {
-        const biasSection = document.getElementById('biasSection');
-        if (biasSection) {
-            biasSection.style.display = 'block';
-            console.log('석대의 인지편향 분석 섹션 표시됨');
-        }
-    }
-
-    // 보고서 팝업 열기/닫기 함수
-    function showReportPopup() {
-        console.log('showReportPopup 호출됨');
-        
-        if (!reportPopup) {
-            console.error('reportPopup 요소를 찾을 수 없습니다!');
-            alert('보고서 팝업을 표시할 수 없습니다. 페이지를 새로고침해주세요.');
-            return;
-        }
-        
-        // 대화 수 계산 ("보고서 제출" 메시지 제외하기 위해 -1)
-        const userMessages = chatMessages.querySelectorAll('.user-message');
-        const messageCountElement = document.getElementById('messageCount');
-        
-        if (messageCountElement) {
-            const actualCount = Math.max(0, userMessages.length - 1); // "보고서 제출" 메시지 제외
-            messageCountElement.textContent = actualCount;
-        }
-        
-        console.log('팝업 표시 중...');
-        reportPopup.style.display = 'flex';
-        // 약간의 지연 후 애니메이션 시작
-        requestAnimationFrame(() => {
-            reportPopup.classList.add('show');
-        });
-    }
-    
-    function hideReportPopup() {
-        if (!reportPopup) return;
-        
-        reportPopup.classList.remove('show');
-        setTimeout(() => {
-            reportPopup.style.display = 'none';
-        }, 400);
-    }
-
-    // 제출하기 버튼 클릭 이벤트
-    function handleSubmit() {
-        console.log('SUBMIT 버튼 클릭됨');
-        
-        const messages = chatMessages.querySelectorAll('.message');
-        
-        if (messages.length <= 1) {
-            alert('대화를 나눈 후 제출해주세요!');
-            return;
-        }
-        
-        // 석대 페이지인지 확인
-        const isSeokdaePage = document.body.hasAttribute('data-character') && 
-                             document.body.getAttribute('data-character') === 'seokdae';
-        
-        console.log('현재 페이지:', isSeokdaePage ? '석대' : '민지');
-        
-        const characterName = isSeokdaePage ? '석대' : '민지';
-        const result = confirm(`${characterName}와의 대화를 제출하시겠습니까?\n\n학습 완료 보고서가 생성됩니다.`);
-        
-        if (result) {
-            console.log('제출 확인 - 보고서 제출 메시지 전송');
-            
-            // 자동으로 "보고서 제출" 메시지 전송
-            addMessage('보고서 제출', true);
-            messageInput.value = '';
-            
-            // AI 응답 대기 후 보고서 팝업 표시
-            setTimeout(async () => {
-                try {
-                    const botResponse = await getBotResponse('보고서 제출');
-                    addMessage(botResponse, false);
-                    
-                    // AI 평가 결과를 파싱하여 보고서에 반영
-                    updateReportWithEvaluation(botResponse);
-                    
-                } catch (error) {
-                    console.error('보고서 제출 응답 오류:', error);
-                    addMessage('학습이 완료되었습니다. 수고하셨습니다!', false);
-                }
-                
-                // 제출 버튼 비활성화
-                if (submitButton) {
-                    submitButton.disabled = true;
-                    submitButton.textContent = 'COMPLETED';
-                    submitButton.style.opacity = '0.6';
-                    submitButton.style.cursor = 'not-allowed';
-                }
-                
-                // 보고서 팝업 표시
-                setTimeout(() => {
-                    showReportPopup();
-                }, 1000);
-                
-            }, 500);
-        }
-    }
-    
-    if (submitButton) {
-        console.log('SUBMIT 버튼에 이벤트 리스너 추가됨');
-        submitButton.addEventListener('click', handleSubmit);
-    } else {
-        console.error('SUBMIT 버튼을 찾을 수 없습니다!');
-    }
-
-    // 보고서 팝업 이벤트 리스너
-    if (closeReportPopup) {
-        closeReportPopup.addEventListener('click', hideReportPopup);
-    }
-    
-    if (reportCloseButton) {
-        reportCloseButton.addEventListener('click', hideReportPopup);
-    }
-    
-    if (nextStageButton) {
-        nextStageButton.addEventListener('click', function() {
-            window.location.href = 'gameplay.html';
-        });
-    }
-    
-    // 보고서 팝업 배경 클릭시 닫기
-    if (reportPopup) {
-        reportPopup.addEventListener('click', function(e) {
-            if (e.target === reportPopup) {
-                hideReportPopup();
-            }
-        });
-    }
-
-    // 스와핑 버튼 기능 (석대 페이지와 민지 페이지에서 작동)
-    const isSeokdaePage = document.body.hasAttribute('data-character') && 
-                         document.body.getAttribute('data-character') === 'seokdae';
-    const isMinjiPage = !isSeokdaePage; // 민지 페이지 (기본값)
-    
-    if (isMinjiPage) {
-        // 민지 페이지 - 백신 부작용 관련 가짜뉴스 콘텐츠 데이터
-        const contentTemplates = {
-            news: (topic, claim, counter) => `최근 ${topic}에 대한 새로운 연구 결과가 발표되었습니다.\n\n${claim}\n\n하지만 전문 의료진들은 "${counter}"라고 반박하고 있습니다.`,
-            forum: (topic, opinion) => `${topic}에 대한 개인 경험담:\n\n${opinion}\n\n여러분은 어떤 경험이 있으신가요?`,
-            social: (person, quote, context) => `${person}: "${quote}"\n\n${context}\n\n이런 이야기를 들으니 걱정이 되네요...`
-        };
-
-        // 백신 관련 가짜뉴스 데이터
-        const articleData = {
-            // 기사 제목: [출처, 날짜, 주제, 주장, 반박, 태그들]
-            '백신 접종 후 심각한 부작용 사례 급증': ['의료뉴스', '2024.01.15', '백신 부작용', '최근 백신 접종 후 심각한 부작용 사례가 급격히 증가하고 있다는 보고가 나왔다', '부작용은 매우 드물며 백신의 이익이 위험보다 훨씬 크다고 의료 전문가들이 강조했다', ['백신', '부작용', '안전성']],
-            '화이자 백신 심근염 위험 WHO도 인정': ['의료뉴스', '2024.01.12', '심근염', 'WHO가 화이자 백신의 심근염 위험성을 공식 인정했다고 보도되었다', '매우 드문 부작용이며 대부분 경미하고 회복 가능하다고 WHO는 설명했다', ['화이자', '심근염', '위험']],
-            '젊은층 백신 부작용 숨겨진 진실': ['의료뉴스', '2024.01.08', '젊은층 부작용', '젊은층에서 발생하는 백신 부작용에 대한 정보가 의도적으로 숨겨지고 있다는 주장이 제기되었다', '모든 부작용 정보는 투명하게 공개되며 젊은층도 백신 접종의 이익이 위험을 상회한다', ['젊은층', '투명성', '정보']],
-            '백신 접종률과 사망률 상관관계 의혹': ['의료뉴스', '2024.01.16', '접종률과 사망률', '백신 접종률이 높은 지역에서 오히려 사망률이 증가했다는 통계가 발표되었다', '다양한 변수를 고려하지 않은 단순 비교이며 백신은 중증과 사망을 현저히 감소시킨다', ['통계', '사망률', '효과']],
-            '의료진도 백신 부작용 우려 표명': ['의료뉴스', '2024.01.17', '의료진 우려', '일부 의료진들이 백신 부작용에 대한 우려를 공개적으로 표명하고 나섰다', '의료계 전체의 의견이 아니며 대다수 전문가들은 백신의 안전성과 효과를 확신한다고 밝혔다', ['의료진', '우려', '전문가']],
-            
-            // 건강뉴스
-            '자연면역이 백신보다 효과적이라는 연구': ['건강뉴스', '2024.01.07', '자연면역', '자연감염을 통한 면역이 백신보다 더 강하고 오래간다는 연구 결과가 나왔다', '자연감염은 중증 위험을 동반하며 백신과 자연면역이 결합될 때 가장 강한 보호 효과를 보인다', ['자연면역', '면역력', '연구']],
-            '백신 접종 후 면역력 오히려 감소': ['건강뉴스', '2024.01.06', '면역력 감소', '백신 접종 후 일시적으로 면역력이 감소하는 현상이 관찰되고 있다', '접종 직후 일시적 현상이며 곧 강력한 면역력이 형성된다고 전문가들이 설명했다', ['면역력', '일시적', '면역반응']],
-            
-            // 과학뉴스
-            'mRNA 백신의 장기적 안전성 우려': ['과학뉴스', '2024.01.05', 'mRNA 안전성', 'mRNA 백신의 장기적 안전성에 대한 데이터가 부족하다는 과학자들의 우려가 제기되었다', '충분한 임상시험을 거쳤으며 지속적인 모니터링을 통해 안전성이 확인되고 있다', ['mRNA', '장기안전성', '임상시험']],
-            '백신 성분이 DNA에 영향을 미칠 가능성': ['과학뉴스', '2024.01.04', 'DNA 영향', '백신 성분이 인체 DNA에 영향을 미칠 수 있다는 연구 결과가 논란이 되고 있다', 'mRNA는 DNA에 통합되지 않으며 이러한 우려는 과학적 근거가 없다고 전문가들이 반박했다', ['DNA', 'mRNA', '유전자']],
-            
-            // 커뮤니티 글: [출처, 날짜, 의견]
-            '[실화] 백신 맞고 응급실 실려간 후기': ['의료포럼', '2024.01.14', '백신 맞고 하루 만에 가슴이 너무 아파서 응급실에 갔습니다. 의사는 심근염 의심이라고 하더군요. 백신과 상관없다고 하지만 타이밍이 너무 우연의 일치인 것 같아요.'],
-            '백신 부작용 은폐 의혹에 대한 토론': ['의료포럼', '2024.01.13', '정부와 제약회사가 백신 부작용을 의도적으로 축소하거나 은폐하고 있는 것은 아닐까요? 주변에서 부작용 겪은 사람들이 생각보다 많은데 공식 통계와는 차이가 있는 것 같습니다.'],
-            '의료진이 말하지 않는 백신의 진실': ['의료포럼', '2024.01.15', '의료진들도 개인적으로는 백신에 대해 우려하는 분들이 많다고 들었습니다. 하지만 공개적으로는 말하기 어려운 분위기라고... 정말 안전한 걸까요?'],
-            '주변에서 백신 부작용 겪은 사람들': ['의료포럼', '2024.01.11', '제 주변만 해도 백신 맞고 이상증상 겪은 사람이 여러 명 있어요. 어지럼증, 심장 두근거림, 생리불순 등... 이게 정말 우연일까요?'],
-            
-            // 건강카페
-            '백신보다 건강한 생활습관이 더 중요': ['건강카페', '2024.01.12', '백신에만 의존하지 말고 균형잡힌 식단, 규칙적인 운동, 충분한 수면으로 면역력을 기르는 게 더 중요한 것 같아요. 자연스러운 방법이 최고입니다.'],
-            '아이 백신 접종 고민되는 엄마들': ['건강카페', '2024.01.09', '우리 아이는 아직 백신을 안 맞혔어요. 부작용이 걱정되서... 다른 엄마들은 어떻게 하셨나요? 아이들 백신 부작용 사례도 있던데 너무 무서워요.'],
-            
-            // 맘카페
-            '임신부 백신 접종 후기 - 걱정됩니다': ['맘카페', '2024.01.08', '임신 중에 백신을 맞았는데 그 이후로 계속 컨디션이 안 좋아요. 태아에게 영향은 없을까 너무 걱정됩니다. 비슷한 경험 있으신 분 계신가요?'],
-            '수유 중 백신 접종해도 될까요?': ['맘카페', '2024.01.07', '모유수유 중인데 백신 성분이 모유를 통해 아이에게 전달될까봐 걱정이에요. 안전하다고는 하는데 정말 괜찮은 걸까요?'],
-            
-            // 주변인 대화: [출처, 날짜, 인물, 발언, 맥락]
-            '친구: "백신 맞고 한 달째 어지러워"': ['카톡방', '2024.01.13', '친구', '백신 맞고 한 달째 어지러워', '백신 접종 후 지속되는 어지럼증으로 일상생활에 불편을 겪고 있다는 친구의 하소연'],
-            '엄마: "옆집 아주머니 백신 맞고 입원했대"': ['카톡방', '2024.01.13', '엄마(60대)', '옆집 아주머니 백신 맞고 입원했대', '주변 지인의 백신 부작용 사례를 전해들은 어머니의 걱정스러운 전언'],
-            '동생: "백신 안 맞은 애들이 더 건강해"': ['카톡방', '2024.01.05', '동생', '백신 안 맞은 애들이 더 건강해', '학교에서 백신을 맞지 않은 학생들이 상대적으로 더 건강해 보인다는 동생의 관찰'],
-            '직장동료: "백신 맞고 계속 아픈 것 같아"': ['카톡방', '2024.01.12', '직장동료', '백신 맞고 계속 아픈 것 같아', '백신 접종 이후 잦은 감기와 컨디션 난조를 호소하는 동료의 고민'],
-            
-            // SNS피드 대화
-            '언니: "백신 맞고 생리가 불규칙해졌어"': ['SNS피드', '2024.01.10', '언니', '백신 맞고 생리가 불규칙해졌어', '백신 접종 후 생리주기 변화를 경험한 언니의 SNS 게시물'],
-            '고등학교 동창: "심장이 계속 두근거려"': ['SNS피드', '2024.01.04', '고등학교 동창', '심장이 계속 두근거려', '백신 접종 후 심장 두근거림 증상을 호소하는 동창의 게시물'],
-            '사촌: "병원에서도 원인을 모르겠다고 해"': ['SNS피드', '2024.01.03', '사촌', '병원에서도 원인을 모르겠다고 해', '백신 접종 후 나타난 증상의 원인을 찾지 못해 답답해하는 사촌의 이야기'],
-            
-            // 가족톡
-            '할머니: "옛날에는 이런 주사 없어도 잘 살았는데"': ['가족톡', '2024.01.09', '할머니(80대)', '옛날에는 이런 주사 없어도 잘 살았는데', '과거 경험을 바탕으로 백신의 필요성에 의문을 표하는 할머니의 말씀'],
-            '아빠: "주변에 백신 부작용 있는 사람 많아"': ['가족톡', '2024.01.02', '아빠(55세)', '주변에 백신 부작용 있는 사람 많아', '직장 동료들 중 백신 부작용을 겪은 사례들이 많다는 아버지의 관찰']
-        };
-
-        // 동적 컨텐츠 생성 함수
-        function generateContent(title) {
-            const data = articleData[title];
-            if (!data) return null;
-
-            const [source, date, ...rest] = data;
-            
-            if (source.includes('뉴스')) {
-                const [topic, claim, counter, tags] = rest;
-                return {
-                    source, date, title,
-                    content: contentTemplates.news(topic, claim, counter),
-                    tags: tags || ['뉴스', '건강', '백신']
-                };
-            } else if (source.includes('포럼') || source.includes('카페')) {
-                const [opinion] = rest;
-                return {
-                    source, date, title,
-                    content: contentTemplates.forum(title, opinion),
-                    tags: ['커뮤니티', '경험담', '의견']
-                };
-            } else {
-                const [person, quote, context] = rest;
-                return {
-                    source, date, title,
-                    content: contentTemplates.social(person, quote, context),
-                    tags: ['개인경험', 'SNS', '지인']
-                };
-            }
-        }
-
-        // 각 탭별 컨텐츠 데이터
-        const contentData = {
-            article: [
-                {
-                    '의료뉴스': [
-                        '백신 접종 후 심각한 부작용 사례 급증',
-                        '화이자 백신 심근염 위험 WHO도 인정',
-                        '젊은층 백신 부작용 숨겨진 진실',
-                        '백신 접종률과 사망률 상관관계 의혹',
-                        '의료진도 백신 부작용 우려 표명'
-                    ],
-                    '건강뉴스': [
-                        '자연면역이 백신보다 효과적이라는 연구',
-                        '백신 접종 후 면역력 오히려 감소',
-                        '건강한 생활습관 vs 백신, 어느 것이 중요한가',
-                        '면역체계 강화를 위한 자연스러운 방법들',
-                        '백신 없이도 건강을 지키는 방법'
-                    ],
-                    '과학뉴스': [
-                        'mRNA 백신의 장기적 안전성 우려',
-                        '백신 성분이 DNA에 영향을 미칠 가능성',
-                        '백신 효과 지속 기간에 대한 새로운 연구',
-                        '변이 바이러스에 대한 백신 효과 의문',
-                        '백신 개발 과정의 단축된 임상시험 논란'
-                    ]
-                }
-            ],
-            community: [
-                {
-                    '의료포럼': [
-                        '[실화] 백신 맞고 응급실 실려간 후기',
-                        '백신 부작용 은폐 의혹에 대한 토론',
-                        '의료진이 말하지 않는 백신의 진실',
-                        '주변에서 백신 부작용 겪은 사람들',
-                        '백신보다 면역력이 더 중요하다'
-                    ],
-                    '건강카페': [
-                        '백신보다 건강한 생활습관이 더 중요',
-                        '아이 백신 접종 고민되는 엄마들',
-                        '자연치유와 면역력 강화 방법',
-                        '백신 없이 코로나를 이겨낸 사람들',
-                        '건강식품으로 면역력 높이기'
-                    ],
-                    '맘카페': [
-                        '임신부 백신 접종 후기 - 걱정됩니다',
-                        '수유 중 백신 접종해도 될까요?',
-                        '아이 백신 접종 후 이상 증상',
-                        '우리 아이는 백신 안 맞혔어요',
-                        '임신 계획 중인데 백신 맞아도 될까요?'
-                    ]
-                }
-            ],
-            acquaintance: [
-                {
-                    '카톡방': [
-                        '친구: "백신 맞고 한 달째 어지러워"',
-                        '엄마: "옆집 아주머니 백신 맞고 입원했대"',
-                        '동생: "백신 안 맞은 애들이 더 건강해"',
-                        '직장동료: "백신 맞고 계속 아픈 것 같아"',
-                        '이모: "백신보다 건강관리가 더 중요해"'
-                    ],
-                    'SNS피드': [
-                        '언니: "백신 맞고 생리가 불규칙해졌어"',
-                        '고등학교 동창: "심장이 계속 두근거려"',
-                        '사촌: "병원에서도 원인을 모르겠다고 해"',
-                        '대학동기: "백신 맞고 탈모가 시작됐어"',
-                        '직장상사: "젊은 사람들은 굳이 맞을 필요 없어"'
-                    ],
-                    '가족톡': [
-                        '할머니: "옛날에는 이런 주사 없어도 잘 살았는데"',
-                        '아빠: "주변에 백신 부작용 있는 사람 많아"',
-                        '삼촌: "자연면역이 더 안전한 것 같아"',
-                        '고모: "건강한 사람은 굳이 맞을 필요 없지"',
-                        '외할머니: "약보다는 잘 먹고 잘 자는 게 최고야"'
-                    ]
-                }
-            ]
-        };
-
-        // 간소화된 스와핑 함수
-        const addSwapListeners = (tabType, buttonIds, contentIds) => {
-            buttonIds.forEach(buttonId => {
-                document.getElementById(buttonId)?.addEventListener('click', function() {
-                    const data = contentData[tabType][0][this.textContent];
-                    if (data) {
-                        contentIds.forEach((contentId, i) => {
-                            const el = document.getElementById(contentId);
-                            if (el && data[i]) {
-                                el.style.opacity = '0.3';
-                                el.textContent = data[i];
-                                setTimeout(() => el.style.opacity = '1', 150);
-                            }
-                        });
-                    }
-                });
-            });
-        };
-
-        // 각 탭별 스와핑 버튼 설정
-        addSwapListeners(
-            'article',
-            ['articleSwap1', 'articleSwap2', 'articleSwap3'],
-            ['article1', 'article2', 'article3', 'article4', 'article5']
-        );
-
-        addSwapListeners(
-            'community',
-            ['communitySwap1', 'communitySwap2', 'communitySwap3'],
-            ['community1', 'community2', 'community3', 'community4', 'community5']
-        );
-
-        addSwapListeners(
-            'acquaintance',
-            ['acquaintanceSwap1', 'acquaintanceSwap2', 'acquaintanceSwap3'],
-            ['acquaintance1', 'acquaintance2', 'acquaintance3', 'acquaintance4', 'acquaintance5']
-        );
-
-        // 기사 상세보기 모달 기능
-        const articleModal = document.getElementById('articleDetailModal');
-        const closeArticleModal = document.getElementById('closeArticleModal');
-        
-        function showArticleDetail(articleTitle) {
-            const detail = generateContent(articleTitle);
-            if (!detail || !articleModal) return;
-            
-            // 모달 내용 업데이트
-            document.getElementById('articleSource').textContent = detail.source;
-            document.getElementById('articleDate').textContent = detail.date;
-            document.getElementById('articleTitle').textContent = detail.title;
-            document.getElementById('articleBody').textContent = detail.content;
-            
-            // 태그 업데이트
-            const tags = document.querySelectorAll('.tag');
-            detail.tags.forEach((tag, index) => {
-                if (tags[index]) {
-                    tags[index].textContent = tag;
-                }
-            });
-            
-            // 모달 표시
-            articleModal.style.display = 'flex';
-            setTimeout(() => {
-                articleModal.classList.add('show');
-            }, 10);
-        }
-        
-        function hideArticleDetail() {
-            if (!articleModal) return;
-            
+    if (closeModal && articleModal) {
+        closeModal.onclick = function() {
+            console.log('기사 모달 닫기 버튼 클릭됨');
+            articleModal.style.display = 'none';
+            articleModal.style.visibility = 'hidden';
+            articleModal.style.opacity = '0';
             articleModal.classList.remove('show');
-            setTimeout(() => {
+        };
+        console.log('기사 모달 닫기 버튼 연결됨');
+    }
+    
+    // 모달 배경 클릭시 닫기
+    if (articleModal) {
+        articleModal.onclick = function(e) {
+            if (e.target === articleModal) {
+                console.log('모달 배경 클릭으로 닫기');
                 articleModal.style.display = 'none';
-            }, 400);
-        }
-        
-        // 모달 닫기 이벤트
-        if (closeArticleModal) {
-            closeArticleModal.addEventListener('click', hideArticleDetail);
-        }
-        
-        // 모달 배경 클릭시 닫기
-        if (articleModal) {
-            articleModal.addEventListener('click', function(e) {
-                if (e.target === articleModal) {
-                    hideArticleDetail();
-                }
-            });
-        }
-        
-        // 모든 컨텐츠 아이템 클릭 이벤트 추가
-        function addContentClickListeners() {
-            // 기사 탭 클릭 이벤트
-            const articleItems = document.querySelectorAll('#articleContent .content-item');
-            articleItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const title = this.textContent.trim();
-                    showArticleDetail(title);
-                });
-                item.style.cursor = 'pointer';
-            });
-            
-            // 커뮤니티 탭 클릭 이벤트
-            const communityItems = document.querySelectorAll('#communityContent .content-item');
-            communityItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const title = this.textContent.trim();
-                    showArticleDetail(title);
-                });
-                item.style.cursor = 'pointer';
-            });
-            
-            // 주변지인 탭 클릭 이벤트
-            const acquaintanceItems = document.querySelectorAll('#acquaintanceContent .content-item');
-            acquaintanceItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const title = this.textContent.trim();
-                    showArticleDetail(title);
-                });
-                item.style.cursor = 'pointer';
-            });
-        }
-        
-        // 페이지 로드 시 이벤트 리스너 추가
-        addContentClickListeners();
-
-    } else if (isSeokdaePage) {
-        // 최적화된 컨텐츠 생성기 - 토큰 효율성 극대화
-        const genContent = (type, intro, claim, rebuttal) => {
-            const templates = {
-                news: `${intro}\n\n${claim}\n\n하지만 전문가들은 "${rebuttal}"라고 반박합니다.`,
-                forum: claim,
-                personal: claim
-            };
-            return templates[type] || templates.news;
-        };
-
-        // 효율적인 컨텐츠 생성 시스템 - 90% 공간 절약
-        const contentTemplates = {
-            news: (topic, claim, counter) => `최근 연구에서 ${topic}에 대한 새로운 견해가 제시되었습니다.\n\n${claim}\n\n하지만 주류 과학자들은 "${counter}"라고 반박하고 있습니다.`,
-            forum: (topic, opinion) => `${topic}에 대해 생각해본 결과:\n\n${opinion}\n\n여러분은 어떻게 생각하시나요?`,
-            social: (person, quote, context) => `${person}: "${quote}"\n\n${context}\n\n이런 말씀을 들으니 생각이 복잡해지네요...`
-        };
-
-        // 핵심 데이터만 저장 - 컴팩트 구조
-        const articleData = {
-            // 기사 제목: [출처, 날짜, 주제, 주장, 반박, 태그들]
-            '올해 지구 평균기온, 1850년 이후 최고치 기록': ['월드뉴스 네트워크', '2024.12', '지구 평균기온', '세계기상기구(WMO)는 2024년 지구 평균기온이 산업화 이전 대비 1.45℃ 높아졌다고 발표했다. 이는 1850년 기상 관측 이래 최고치다. 특히 유럽과 아시아 지역의 폭염 빈도는 지난 20년 대비 두 배 가까이 증가했으며, 북극의 해빙 면적은 9월 기준 역사적 최저 수준을 기록했다.', 'WMO는 "기후변화는 명백한 과학적 사실이며, 인류의 행동에 따른 결과"라고 강조했다', ['기온', '기록', '온난화']],
-            '국내 태풍 피해액 10년간 2배 증가… 기후변화 영향 뚜렷': ['KBN 뉴스', '2024.09', '태풍 피해', '한국재난안전연구원의 분석에 따르면, 최근 10년간 태풍으로 인한 국내 평균 연간 피해액은 2조 원을 넘어섰다. 이는 2000년대 초반 대비 2배 이상 늘어난 수치다. 전문가들은 해수면 온도 상승으로 인해 태풍이 점점 강력해지고, 경로도 예측하기 어려워졌다고 설명했다.', '정부는 이에 따라 방재 인프라 확충과 기후적응 정책 강화를 추진하고 있다', ['태풍', '피해', '기후변화']],
-            '北극곰 개체 수 감소세… 먹이 부족과 해빙 축소 탓': ['내셔널 와일드그래픽', '2023.07', '북극곰', '국제자연보전연맹(IUCN)은 북극곰이 취약종으로 분류되었다고 재확인했다. 최근 연구에서는 1980년대 약 2만 6천 마리에 달했던 개체 수가 현재 2만 마리 이하로 줄어든 것으로 추정된다. 해빙 면적 축소로 사냥 가능한 기간이 줄어들면서 먹이 부족이 심각해지고 있다.', '연구진은 "일부 지역에서 개체 수가 일시적으로 증가한 사례가 있지만, 이는 장기적 추세와는 다르다"고 설명했다', ['북극곰', '멸종위기', '해빙']],
-            '한겨울 폭설 속, 시민들 '기후변화 실감 어렵다'는 목소리도': ['코리아 이코노믹 리뷰', '2024.01', '폭설과 온난화', '올겨울 미국과 한국은 기록적인 폭설을 경험했다. 시민들은 "이렇게 추운데 무슨 지구온난화냐"며 고개를 갸웃하고 있다. 일부 지역 주민은 난방비 부담이 폭등했다고 토로한다. 과학자들은 여전히 지구가 뜨거워지고 있다고 주장하지만, 실제로 거리에서 느끼는 현실은 다르다.', '"내가 사는 곳은 더 춥다"는 시민들의 목소리가 과연 무시돼야 할까?', ['폭설', '시민반응', '체감온도']],
-            '세계적 석학도 경고… '온난화 공포, 과장됐다'': ['글로벌 타임즈 데일리', '2024.05', '온난화 회의론', '미국의 일부 저명 학자는 최근 인터뷰에서 "기후변화가 전혀 없는 것은 아니지만, 대중에게 알려진 만큼 위협적이지 않다"고 주장했다. 그는 "기후 위기는 정치적으로 과장된 면이 크며, 탄소세 확대와 같은 정책을 정당화하기 위해 활용되고 있다"고 덧붙였다.', '이 발언은 여러 방송에서 인용되며 큰 반향을 일으켰다. 시민들은 "전문가도 그렇게 말하는데, 기후 위기 담론은 과장된 게 아니냐"는 반응을 보였다', ['석학', '회의론', '정치적활용']],
-            
-            // 과학뉴스
-            '해수면 상승 속도 둔화, 과학자들 당황': ['과학뉴스', '2024.01.07', '해수면 상승', '최신 위성 관측 데이터에 따르면 해수면 상승 속도가 예상보다 둔화되고 있다', '일시적 현상일 수 있으며 장기적 추세는 여전히 상승세를 보인다', ['해수면', '관측', '예측']],
-            'CO2와 기온 상관관계 약해져, 새로운 기후 모델 필요': ['과학뉴스', '2024.01.06', 'CO2와 기온', '대기 중 CO2 농도와 지구 기온 사이의 상관관계가 예상보다 약하다는 연구 결과가 나왔다', '단기간 데이터로 장기 트렌드를 판단하기는 어렵다고 전문가들이 반박했다', ['CO2', '상관관계', '모델']],
-            
-            // 국제뉴스
-            '일부 국가들, 파리기후협약 탈퇴 검토': ['국제뉴스', '2024.01.05', '기후 협약', '경제적 부담을 이유로 파리기후협약 탈퇴를 검토하는 국가들이 늘어나고 있다', '기후변화 대응은 선택이 아닌 필수라고 국제사회가 강력히 반발했다', ['협약', '국제', '정치']],
-            '중국 석탄 발전 증가에도 글로벌 기온 하락': ['국제뉴스', '2024.01.04', '석탄과 기온', '중국의 석탄 발전량이 크게 증가했음에도 글로벌 평균 기온이 일시적으로 하락했다', '단년도 데이터로 장기 추세를 판단하는 것은 부적절하다고 기후학자들이 반박했다', ['석탄', '중국', '기온']],
-            
-            // 커뮤니티 글: [출처, 날짜, 의견]
-            '[논란] 지구온난화 사기설, 진실은 무엇인가?': ['포럼글', '2024.01.14', '과거에도 기온 변화가 있었고, 중세 온난기가 지금보다 더웠다는 기록들을 보면 정말 인위적 온난화가 맞는지 의문스럽다. 혹시 환경세를 걷기 위한 정치적 목적은 아닐까?'],
-            '기후변화 데이터 조작 의혹에 대한 토론': ['포럼글', '2024.01.13', '최근에 기후변화 관련 데이터가 조작되었다는 의혹이 제기되고 있다. 몇몇 연구소에서 온도 데이터를 임의로 수정했다는 내부 고발도 있었다. 과학은 객관적이어야 하는데 너무 정치적으로 이용되는 것 같다.'],
-            '실제 경험으로 봤을 때 온난화는 없다': ['포럼글', '2024.01.15', '50년을 살아보니 예전과 크게 다르지 않다. 오히려 사람들이 더위에 약해진 것 같다. 언론이 과장하는 것은 아닐까?'],
-            '온난화론자들이 숨기고 싶어하는 진실들': ['포럼글', '2024.01.11', '온난화를 주장하는 사람들이 절대 말하지 않는 진실들이 있다. 중세 온난기, CO2 농도와 기온의 시차, 태양 활동 주기 등 언론에서는 보도하지 않는 사실들이 너무 많다.'],
-            
-            // 토론방
-            '실제로 겨울이 더 추워지고 있는데 온난화?': ['토론방', '2024.01.12', '매년 겨울마다 한파주의보와 한파경보가 발령되고 있다. 작년 겨울도 역대급으로 추웠는데 이런 상황에서 지구온난화라고 하는 게 말이 되나? 오히려 빙하기가 오고 있는 건 아닐까?'],
-            'CO2 증가 = 식물 성장 촉진, 오히려 좋은거 아님?': ['토론방', '2024.01.09', 'CO2가 늘어나는 게 나쁘기만 한 건 아니다. CO2는 식물들이 광합성에 필요한 원료이고, 실제로 지구가 더 푸르러지고 있다는 연구 결과도 있다. 이런 긍정적인 면은 왜 언론에서 말하지 않을까?'],
-            
-            // 카페글
-            '우리 할아버지 때가 더 더웠다는데...': ['카페글', '2024.01.08', '할아버지가 어릴 때(1950년대)에는 지금보다 여름이 훨씬 더웠다고 하신다. 그때는 선풍기도 없이 살았는데 정말 힘들었다고... 어른들 말씀을 들어보면 온난화가 사실인지 의심스럽다.'],
-            '기상청 예보도 맞지 않는데 100년 후를 예측?': ['카페글', '2024.01.07', '기상청에서 내일 비 온다고 해놨는데 맑은 경우가 얼마나 많은가? 일주일 뒤 날씨 예보도 자주 틀리는데 어떻게 100년 뒤 기후를 예측할 수 있다는 거지?'],
-            
-            // 주변인 대화: [출처, 날짜, 인물, 발언, 맥락]
-            '친구: "작년 겨울이 역대급으로 추웠는데 온난화라고?"': ['SNS피드', '2024.01.13', '친구', '작년 겨울이 역대급으로 추웠는데 온난화라고?', '매년 한파 경보가 발령되는 상황에서 온난화 이론에 대한 의문을 표현'],
-            '할머니: "옛날 여름이 지금보다 훨씬 더웠지"': ['SNS피드', '2024.01.13', '할머니(85세)', '옛날 여름이 지금보다 훨씬 더웠지', '1950-60년대를 경험한 할머니의 증언으로 현재 온난화에 대한 회의적 시각'],
-            '동료: "환경세만 늘리려는 정부의 수작이야"': ['SNS피드', '2024.01.05', '동료', '환경세만 늘리려는 정부의 수작이야', '탄소세, 환경세 등 새로운 세금에 대한 서민들의 부담과 불만을 표현'],
-            '이웃집 아저씨: "북극곰이 늘어나고 있다던데?"': ['SNS피드', '2024.01.12', '이웃집 아저씨', '북극곰이 늘어나고 있다던데?', '북극곰 개체수 증가 연구에 대한 언급으로 온난화 이론에 대한 다른 시각 제시'],
-            
-            // 메신저 대화
-            '엄마: "TV에서 온난화 거짓말이라고 하더라"': ['메신저', '2024.01.10', '엄마', 'TV에서 온난화 거짓말이라고 하더라', '시사프로그램에서 본 온난화 의혹에 대한 정보를 가족과 공유'],
-            '형: "과학자들도 반반으로 나뉘어져 있다던데?"': ['메신저', '2024.01.04', '형', '과학자들도 반반으로 나뉘어져 있다던데?', '과학자들 사이의 의견 분열에 대한 언급과 언론의 편향성에 대한 우려'],
-            '친구: "빙하기가 오고 있다는 과학자도 있어"': ['메신저', '2024.01.03', '친구', '빙하기가 오고 있다는 과학자도 있어', '태양 활동 감소로 인한 빙하기 가능성을 언급한 과학자 인터뷰에 대한 언급'],
-            
-            // 블로그
-            '이웃 블로거: 지구온난화 음모론의 진실': ['블로그', '2024.01.09', '이웃 블로거', '지구온난화 음모론의 진실', '개인 블로거가 정리한 온난화에 대한 의문점들과 정치적 목적설에 대한 분석'],
-            '과학 블로거: 기후모델의 한계와 예측 오류들': ['블로그', '2024.01.02', '과학 블로거', '기후모델의 한계와 예측 오류들', '기후 예측 모델의 기술적 한계와 과거 예측 실패 사례들에 대한 전문적 분석']
-        };
-
-        // 동적 컨텐츠 생성 함수
-        function generateContent(title) {
-            const data = articleData[title];
-            if (!data) return null;
-
-            const [source, date, ...rest] = data;
-            
-            if (source.includes('뉴스')) {
-                const [topic, claim, counter, tags] = rest;
-                return {
-                    source, date, title,
-                    content: contentTemplates.news(topic, claim, counter),
-                    tags: tags || ['뉴스', '환경', '과학']
-                };
-            } else if (source === '포럼글') {
-                const [opinion] = rest;
-                return {
-                    source, date, title,
-                    content: contentTemplates.forum(title, opinion),
-                    tags: ['포럼', '의견', '토론']
-                };
-            } else {
-                const [person, quote, context] = rest;
-                return {
-                    source, date, title,
-                    content: contentTemplates.social(person, quote, context),
-                    tags: ['SNS', '개인', '경험']
-                };
+                articleModal.style.visibility = 'hidden';
+                articleModal.style.opacity = '0';
+                articleModal.classList.remove('show');
             }
-        }
-
-        // 각 탭별 컨텐츠 데이터
-        const contentData = {
-            article: [
-                {
-                    '환경뉴스': [
-                        '올해 지구 평균기온, 1850년 이후 최고치 기록',
-                        '국내 태풍 피해액 10년간 2배 증가… 기후변화 영향 뚜렷',
-                        '北극곰 개체 수 감소세… 먹이 부족과 해빙 축소 탓',
-                        '한겨울 폭설 속, 시민들 '기후변화 실감 어렵다'는 목소리도',
-                        '세계적 석학도 경고… '온난화 공포, 과장됐다''
-                    ],
-                    '과학뉴스': [
-                        '태양 활동 변화가 기후에 미치는 영향이 더 크다는 연구',
-                        '해수면 상승 속도 둔화, 과학자들 당황',
-                        'CO2와 기온 상관관계 약해져, 새로운 기후 모델 필요',
-                        '남극 빙하 두께 증가, 온난화 이론과 모순',
-                        '화산 활동이 기후에 미치는 영향 과소평가되었나'
-                    ],
-                    '국제뉴스': [
-                        '일부 국가들, 파리기후협약 탈퇴 검토',
-                        '중국 석탄 발전 증가에도 글로벌 기온 하락',
-                        '기후변화 대응 정책 실패 인정하는 국가들 증가',
-                        '유럽 각국, 환경 규제 완화 조치 발표',
-                        'G20 정상회의에서 기후 정책 재검토 합의'
-                    ]
-                }
-            ],
-            community: [
-                {
-                    '포럼글': [
-                        '[논란] 지구온난화 사기설, 진실은 무엇인가?',
-                        '기후변화 데이터 조작 의혹에 대한 토론',
-                        '온난화론자들이 숨기고 싶어하는 진실들',
-                        '실제 경험으로 봤을 때 온난화는 없다',
-                        '기후학자들의 연구비 따내기용 과장설'
-                    ],
-                    '토론방': [
-                        '실제로 겨울이 더 추워지고 있는데 온난화?',
-                        '과학자들도 의견이 갈리는 기후변화',
-                        'CO2 증가 = 식물 성장 촉진, 오히려 좋은거 아님?',
-                        '온실가스보다 태양 활동이 더 중요한 것 같은데',
-                        '기후 데이터 조작 사건들 정리해봤습니다'
-                    ],
-                    '카페글': [
-                        '우리 할아버지 때가 더 더웠다는데...',
-                        '기상청 예보도 맞지 않는데 100년 후를 예측?',
-                        '환경단체들의 후원금 모금용 수단일뿐',
-                        '요즘 겨울이 더 추운 것 같은데 온난화?',
-                        '언론이 위기 조장하는 이유가 뭘까요?'
-                    ]
-                }
-            ],
-            acquaintance: [
-                {
-                    'SNS피드': [
-                        '친구: "작년 겨울이 역대급으로 추웠는데 온난화라고?"',
-                        '삼촌: "내가 젊었을 때가 지금보다 훨씬 더웠어"',
-                        '동료: "환경세만 늘리려는 정부의 수작이야"',
-                        '할머니: "옛날 여름이 지금보다 훨씬 더웠지"',
-                        '이웃집 아저씨: "북극곰이 늘어나고 있다던데?"'
-                    ],
-                    '메신저': [
-                        '엄마: "TV에서 온난화 거짓말이라고 하더라"',
-                        '형: "과학자들도 반반으로 나뉘어져 있다던데?"',
-                        '친구: "빙하기가 오고 있다는 과학자도 있어"',
-                        '아버지: "우리 때는 진짜 더웠는데 요즘 애들이 약해"',
-                        '사촌형: "온난화는 정치적 목적이야"'
-                    ],
-                    '블로그': [
-                        '이웃 블로거: 지구온난화 음모론의 진실',
-                        '과학 블로거: 기후모델의 한계와 예측 오류들',
-                        '일반인 블로그: 내가 경험한 기후변화의 허상',
-                        '농부 블로거: 실제 농업 현장에서 본 기후변화',
-                        '퇴직교사 블로그: 40년간 본 날씨 변화의 진실'
-                    ]
-                }
-            ]
         };
-
-        // 간소화된 스와핑 함수
-        const addSwapListeners = (tabType, buttonIds, contentIds) => {
-            buttonIds.forEach(buttonId => {
-                document.getElementById(buttonId)?.addEventListener('click', function() {
-                    const data = contentData[tabType][0][this.textContent];
-                    if (data) {
-                        contentIds.forEach((contentId, i) => {
-                            const el = document.getElementById(contentId);
-                            if (el && data[i]) {
-                                el.style.opacity = '0.3';
-                                el.textContent = data[i];
-                                setTimeout(() => el.style.opacity = '1', 150);
-                            }
-                        });
-                    }
-                });
-            });
-        };
-
-        // 각 탭별 스와핑 버튼 설정
-        addSwapListeners(
-            'article',
-            ['articleSwap1', 'articleSwap2', 'articleSwap3'],
-            ['article1', 'article2', 'article3', 'article4', 'article5']
-        );
-
-        addSwapListeners(
-            'community',
-            ['communitySwap1', 'communitySwap2', 'communitySwap3'],
-            ['community1', 'community2', 'community3', 'community4', 'community5']
-        );
-
-        addSwapListeners(
-            'acquaintance',
-            ['acquaintanceSwap1', 'acquaintanceSwap2', 'acquaintanceSwap3'],
-            ['acquaintance1', 'acquaintance2', 'acquaintance3', 'acquaintance4', 'acquaintance5']
-        );
-
-        // 기사 상세보기 모달 기능
-        const articleModal = document.getElementById('articleDetailModal');
-        const closeArticleModal = document.getElementById('closeArticleModal');
+        console.log('모달 배경 클릭 이벤트 연결됨');
+    }
+    
+    // 스왑 버튼들
+    const swap1 = document.getElementById('articleSwap1');
+    const swap2 = document.getElementById('articleSwap2');
+    const swap3 = document.getElementById('articleSwap3');
+    const cSwap1 = document.getElementById('communitySwap1');
+    const cSwap2 = document.getElementById('communitySwap2');
+    const cSwap3 = document.getElementById('communitySwap3');
+    
+    // 페이지 로드시 기본으로 환경뉴스 설정
+    function setDefaultEnvironmentNews() {
+        const a1 = document.getElementById('article1');
+        const a2 = document.getElementById('article2');
+        const a3 = document.getElementById('article3');
+        const a4 = document.getElementById('article4');
+        const a5 = document.getElementById('article5');
         
-        function showArticleDetail(articleTitle) {
-            const detail = generateContent(articleTitle);
-            if (!detail || !articleModal) return;
-            
-            // 모달 내용 업데이트
-            document.getElementById('articleSource').textContent = detail.source;
-            document.getElementById('articleDate').textContent = detail.date;
-            document.getElementById('articleTitle').textContent = detail.title;
-            document.getElementById('articleBody').textContent = detail.content;
-            
-            // 태그 업데이트
-            const tags = document.querySelectorAll('.tag');
-            detail.tags.forEach((tag, index) => {
-                if (tags[index]) {
-                    tags[index].textContent = tag;
-                }
-            });
-            
-            // 모달 표시
-            articleModal.style.display = 'flex';
-            setTimeout(() => {
-                articleModal.classList.add('show');
-            }, 10);
-        }
+        if (a1) a1.textContent = '올해 지구 평균기온, 1850년 이후 최고치 기록';
+        if (a2) a2.textContent = '국내 태풍 피해액 10년간 2배 증가… 기후변화 영향 뚜렷';
+        if (a3) a3.textContent = '한겨울 폭설 속, 시민들 \'기후변화 실감 어렵다\'는 목소리도';
+        if (a4) a4.textContent = '세계적 석학도 경고… \'온난화 공포, 과장됐다\'';
+        if (a5) a5.textContent = '北극곰 개체 수 감소세… 먹이 부족과 해빙 축소 탓';
         
-        function hideArticleDetail() {
-            if (!articleModal) return;
+        console.log('기본 환경뉴스 설정 완료');
+    }
+    
+    // 페이지 로드시 환경뉴스로 설정
+    setDefaultEnvironmentNews();
+    
+    if (swap1) {
+        swap1.onclick = function() {
+            console.log('기사 스왑1 클릭됨');
+            const a1 = document.getElementById('article1');
+            const a2 = document.getElementById('article2');
+            const a3 = document.getElementById('article3');
+            const a4 = document.getElementById('article4');
+            const a5 = document.getElementById('article5');
             
-            articleModal.classList.remove('show');
-            setTimeout(() => {
-                articleModal.style.display = 'none';
-            }, 400);
-        }
-        
-        // 모달 닫기 이벤트
-        if (closeArticleModal) {
-            closeArticleModal.addEventListener('click', hideArticleDetail);
-        }
-        
-        // 모달 배경 클릭시 닫기
-        if (articleModal) {
-            articleModal.addEventListener('click', function(e) {
-                if (e.target === articleModal) {
-                    hideArticleDetail();
-                }
-            });
-        }
-        
-        // 모든 컨텐츠 아이템 클릭 이벤트 추가
-        function addContentClickListeners() {
-            // 기사 탭 클릭 이벤트
-            const articleItems = document.querySelectorAll('#articleContent .content-item');
-            articleItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const title = this.textContent.trim();
-                    showArticleDetail(title);
-                });
-                item.style.cursor = 'pointer';
-            });
+            if (a1) a1.textContent = '재생에너지 발전량, 석탄발전 추월 임박';
+            if (a2) a2.textContent = '플라스틱 대체재 개발, 해양오염 해결 기대';
+            if (a3) a3.textContent = '전기차 보급 확산으로 대기질 개선 효과';
+            if (a4) a4.textContent = '탄소중립 정책으로 녹색산업 성장 가속';
+            if (a5) a5.textContent = '도시 녹화사업, 열섬현상 완화에 효과적';
             
-            // 커뮤니티 탭 클릭 이벤트
-            const communityItems = document.querySelectorAll('#communityContent .content-item');
-            communityItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const title = this.textContent.trim();
-                    showArticleDetail(title);
-                });
-                item.style.cursor = 'pointer';
-            });
-            
-            // 주변지인 탭 클릭 이벤트
-            const acquaintanceItems = document.querySelectorAll('#acquaintanceContent .content-item');
-            acquaintanceItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const title = this.textContent.trim();
-                    showArticleDetail(title);
-                });
-                item.style.cursor = 'pointer';
-            });
-        }
-        
-        // 페이지 로드 시 이벤트 리스너 추가
-        addContentClickListeners();
-        
-        // 스와핑 후에도 클릭 이벤트 재설정
-        const originalAddSwapListeners = addSwapListeners;
-        addSwapListeners = function(tabType, buttonIds, contentIds) {
-            originalAddSwapListeners(tabType, buttonIds, contentIds);
-            
-            // 모든 탭에서 클릭 이벤트 재설정
-            buttonIds.forEach(buttonId => {
-                const button = document.getElementById(buttonId);
-                if (button) {
-                    button.addEventListener('click', function() {
-                        setTimeout(() => {
-                            addContentClickListeners();
-                        }, 200);
-                    });
-                }
-            });
+            // 스왑 후 클릭 이벤트 재연결
+            setupArticleClicks();
         };
     }
-
-    messageInput.focus();
-});
+    
+    if (swap2) {
+        swap2.onclick = function() {
+            console.log('기사 스왑2 클릭됨');
+            const a1 = document.getElementById('article1');
+            const a2 = document.getElementById('article2');
+            const a3 = document.getElementById('article3');
+            const a4 = document.getElementById('article4');
+            const a5 = document.getElementById('article5');
+            
+            if (a1) a1.textContent = '태양 활동 변화가 기후에 미치는 영향 연구';
+            if (a2) a2.textContent = '이산화탄소와 기온 상관관계, 새로운 모델 필요';
+            if (a3) a3.textContent = '화산 활동이 지구 온도에 미치는 영향 재평가';
+            if (a4) a4.textContent = '기후 데이터 분석 방법론의 한계점 지적';
+            if (a5) a5.textContent = '자연적 기후 변동성과 인위적 요인 구분 연구';
+            
+            // 스왑 후 클릭 이벤트 재연결
+            setupArticleClicks();
+        };
+    }
+    
+    if (swap3) {
+        swap3.onclick = function() {
+            console.log('기사 스왑3 클릭됨');
+            const a1 = document.getElementById('article1');
+            const a2 = document.getElementById('article2');
+            const a3 = document.getElementById('article3');
+            const a4 = document.getElementById('article4');
+            const a5 = document.getElementById('article5');
+            
+            if (a1) a1.textContent = '주요국, 파리기후협약 재검토 논의 시작';
+            if (a2) a2.textContent = '중국 석탄발전 증가에도 글로벌 기온 변화 미미';
+            if (a3) a3.textContent = '유럽 각국, 환경 규제 완화 조치 검토';
+            if (a4) a4.textContent = '기후변화 대응 정책 효과에 대한 국제적 논란';
+            if (a5) a5.textContent = 'G20 정상회의, 기후 정책 실효성 재평가 합의';
+            
+            // 스왑 후 클릭 이벤트 재연결
+            setupArticleClicks();
+        };
+    }
+    
+    if (cSwap1) {
+        cSwap1.onclick = function() {
+            console.log('커뮤니티 스왑1 클릭됨');
+            const c1 = document.getElementById('community1');
+            const c2 = document.getElementById('community2');
+            const c3 = document.getElementById('community3');
+            const c4 = document.getElementById('community4');
+            const c5 = document.getElementById('community5');
+            
+            if (c1) c1.textContent = '[의견] 지구온난화 심각성에 대한 과학적 근거들';
+            if (c2) c2.textContent = '기후변화 대응, 개인의 실천 방안 토론';
+            if (c3) c3.textContent = '재생에너지 전환의 경제적 효과 분석';
+            if (c4) c4.textContent = '환경 보호와 경제 발전의 균형점은?';
+            if (c5) c5.textContent = '탄소중립 목표 달성을 위한 정책 제안';
+            
+            // 스왑 후 클릭 이벤트 재연결
+            setupArticleClicks();
+        };
+    }
+    
+    if (cSwap2) {
+        cSwap2.onclick = function() {
+            console.log('커뮤니티 스왑2 클릭됨');
+            const c1 = document.getElementById('community1');
+            const c2 = document.getElementById('community2');
+            const c3 = document.getElementById('community3');
+            const c4 = document.getElementById('community4');
+            const c5 = document.getElementById('community5');
+            
+            if (c1) c1.textContent = '[반박] 지구온난화 과장설에 대한 반론';
+            if (c2) c2.textContent = '기후 데이터 해석의 다양한 관점들';
+            if (c3) c3.textContent = '온실가스 vs 태양활동, 어느 것이 더 중요한가?';
+            if (c4) c4.textContent = '과거 기후변화와 현재 상황의 차이점';
+            if (c5) c5.textContent = '기후과학의 불확실성에 대한 토론';
+            
+            // 스왑 후 클릭 이벤트 재연결
+            setupArticleClicks();
+        };
+    }
+    
+    if (cSwap3) {
+        cSwap3.onclick = function() {
+            console.log('커뮤니티 스왑3 클릭됨');
+            const c1 = document.getElementById('community1');
+            const c2 = document.getElementById('community2');
+            const c3 = document.getElementById('community3');
+            const c4 = document.getElementById('community4');
+            const c5 = document.getElementById('community5');
+            
+            if (c1) c1.textContent = '[회의론] 온난화는 정말 인간 때문일까?';
+            if (c2) c2.textContent = '겨울이 더 추워지는데 온난화가 맞나요?';
+            if (c3) c3.textContent = '기상청 예보도 안 맞는데 100년 후 예측?';
+            if (c4) c4.textContent = '환경단체들의 과장된 위기론에 속지 마세요';
+            if (c5) c5.textContent = 'CO2 증가 = 식물 성장 촉진, 오히려 좋은 것 아닌가';
+            
+            // 스왑 후 클릭 이벤트 재연결
+            setupArticleClicks();
+        };
+    }
+    
+    console.log('==== 모든 기능 연결 완료 ====');
+    console.log('internetButton:', !!internetBtn);
+    console.log('internetPopup:', !!internetPop);
+    console.log('submitButton:', !!submitBtn);
+    console.log('reportPopup:', !!reportPop);
+    console.log('items:', items.length);
+};
