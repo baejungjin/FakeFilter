@@ -185,9 +185,19 @@ module.exports = async function handler(req, res) {
     }
 
     try {
+        // 환경 변수 확인
+        if (!process.env.OPENAI_API_KEY) {
+            console.error('OPENAI_API_KEY 환경변수가 설정되지 않았습니다');
+            return res.status(500).json({ 
+                error: 'API 키가 설정되지 않았습니다. Vercel 환경변수를 확인해주세요.' 
+            });
+        }
+
         // URL에서 캐릭터 파라미터 추출
         const { character } = req.query;
         const { message, history = [] } = req.body;
+
+        console.log(`[${new Date().toISOString()}] ${character} 캐릭터로 요청 받음:`, message);
 
         // 유효성 검사
         if (!message || message.trim() === '') {

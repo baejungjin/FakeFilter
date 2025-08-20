@@ -71,9 +71,8 @@ window.onload = function() {
                     try {
                         console.log('석대 API 호출 중...');
                         
-                        // 현재 URL이 localhost인지 확인
-                        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                        const apiUrl = isLocalhost ? '/api/chat/seokdae' : 'https://your-vercel-domain.vercel.app/api/chat/seokdae';
+                        // API URL 설정 (상대 경로 사용 - Vercel에서 자동으로 올바른 도메인 사용)
+                        const apiUrl = '/api/chat/seokdae';
                         
                         const response = await fetch(apiUrl, {
                             method: 'POST',
